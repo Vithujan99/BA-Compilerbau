@@ -1,0 +1,14 @@
+class Main {
+   constructor Main new(int a, int b) {
+   }
+   function void main() {
+        var int num1;
+        var Main m;
+   }
+   method int add (int x, String s, int d){
+
+   }
+   function int sadd(int z){
+        var int num2;
+   }
+}

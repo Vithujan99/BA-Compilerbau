@@ -1,0 +1,12 @@
+class Main {
+   constructor Main new(int a, int b) {
+   }
+   function void main() {
+   }
+   method int add (int z){
+
+   }
+   function int sadd(int z){
+
+   }
+}
