@@ -26,7 +26,7 @@
     istore 1
     getstatic java/lang/System.out Ljava/io/PrintStream;
     iload 1
-    invokevirtual java/io/PrintStream/println(I)V
+    invokevirtual java/io/PrintStream.print(I)V
     return
 .end method
 

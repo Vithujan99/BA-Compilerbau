@@ -1,6 +1,7 @@
 package projektvstest;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
 
 public class JasminWriter {
     FileWriter writeFile;
@@ -77,13 +78,20 @@ public class JasminWriter {
     public void writeNew(String className){
         write("new "+ className + "\ndup");
     }
+    public void writeBiPush(int number) {
+        write("bipush " + number);
+    }
+    public void writeLdc(String s){
+        write("ldc" + " \"" + s + "\"");
+    }
+    public void writeAconst(String s){
+
+    }
 
 //writepush unterteilt------------------------------------------
     //bipush nur für Integer
     //noch eins für String ldc <Hallo World!>
-    public void writeBiPush(int number) {
-        write("bipush " + number);
-    }
+
     public void writeLoad(Integer index, String type){
         if (type.equals("int")||type.equals("boolean")||type.equals("char")){
             out = "iload " + index;
@@ -131,14 +139,22 @@ public class JasminWriter {
 
     //Jacks call Function;
     // Für parameterType wird kein getJasminType aufgerufen weil es im Compilation Engine aufgerufen wird.
-    public void writeInvoke(String subroutineKind, String className, String subroutineName, String parameterType, String returnType){
+    public void writeInvoke(String subroutineKind, String className, String subroutineName, List<String> parameterType, String returnType){
+        StringBuilder pT = new StringBuilder();
+        if(parameterType == null || parameterType.size() == 0){
+            pT.append("");
+        }else{
+            for (String t : parameterType){
+                pT.append(getJasminType(t));
+            }
+        }
         switch (subroutineKind) {
             case "method" -> out = "invokevirtual ";
             case "function" -> out = "invokestatic ";
             case "constructor" -> out = "invokespecial ";
             default -> out = "";
         }
-        out = out  + className + "." + subroutineName +"("+parameterType+")" + getJasminType(returnType);
+        out = out  + className + "." + subroutineName +"("+pT+")" + getJasminType(returnType);
         write(out);
     }
 
@@ -150,9 +166,10 @@ public class JasminWriter {
                 type = "I";
             }else if(subroutineName.equals("printString")){
                 type = "Ljava/lang/String;";
-
+            }else if(subroutineName.equals("printChar")){
+                type = "C";
             }
-            write("invokevirtual java/io/PrintStream/println("+type+")V");
+            write("invokevirtual java/io/PrintStream.print("+type+")V");
         }
     }
 
@@ -181,19 +198,19 @@ public class JasminWriter {
     //Muss geschaut werden wie es mit den Schleifen funktioniert.
     //jump Counter wird in dieser Klasse vearbeitet!!!
             case "&lt;":
-                out = "if_icmpge jump1"+ "\n"+ writeJumpArithmetic();
+                out = "if_icmpge " +"jump"+(jumpCounter)+ "\n"+ writeJumpArithmetic();
                 break;
             case "&gt;":
-                out = "if_icmple jump1"+ "\n"+ writeJumpArithmetic();
+                out = "if_icmple " +"jump"+(jumpCounter)+ "\n"+ writeJumpArithmetic();
                 break;
             case "=":
-                out = "if_icmpne jump1"+ "\n"+ writeJumpArithmetic();
+                out = "if_icmpne " +"jump"+(jumpCounter)+ "\n"+ writeJumpArithmetic();
                 break;
             case "neg":
                 out = "ineg";//???
                 break;
             case "~":
-                out = "ifne jump1"+ "\n" + writeJumpArithmetic();//???
+                out = "ifne " +"jump"+(jumpCounter)+ "\n" + writeJumpArithmetic();//???
                 break;       
             default:
                 break;
@@ -205,8 +222,8 @@ public class JasminWriter {
         String out = "bipush 1" + "\n"+
         "goto jump"+(jumpCounter+1)+ "\n"+
         "jump"+(jumpCounter)+":" + "\n"+
-        "iconst_0" + "\n"+
-        "jump"+(jumpCounter+1)+":" + "\n";
+        "bipush 0" + "\n"+
+        "jump"+(jumpCounter+1)+":";
         jumpCounter += 2;
         return out;
     }

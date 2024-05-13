@@ -1,16 +1,24 @@
 .class public Main
 .super java/lang/Object
-.field x I
-.field static y I
 .method public static main([Ljava/lang/String;)V
 .limit stack 10
-.limit locals 1
-getstatic java/lang/System.out Ljava/io/PrintStream;
+.limit locals 3
 bipush 1
-bipush 2
-bipush 3
-imul
-iadd
+istore 1
+bipush 1
+istore 2
+getstatic java/lang/System.out Ljava/io/PrintStream;
+iload 1
+ineg
+invokevirtual java/io/PrintStream.print(I)V
+getstatic java/lang/System.out Ljava/io/PrintStream;
+iload 2
+ifne jump0
+bipush 1
+goto jump1
+jump0:
+bipush 0
+jump1:
 invokevirtual java/io/PrintStream.print(I)V
 return
 .end method

@@ -11,6 +11,6 @@
         bipush 3
         imul
         iadd
-		invokevirtual java/io/PrintStream/println(I)V
+		invokevirtual java/io/PrintStream.print(I)V
         return
 .end method

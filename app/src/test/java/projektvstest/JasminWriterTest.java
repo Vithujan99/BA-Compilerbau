@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,11 +31,11 @@ public class JasminWriterTest {
 
   @Test void testWriteInvoke(){
     JasminWriter writer = new JasminWriter("JackFiles\\AClassTest\\JasminWriterTest\\TestWriteInvoke.jack");
-    writer.writeInvoke("method", "TestM","add","I","int");
+    writer.writeInvoke("method", "TestM","add", List.of("int"),"int");
     assertEquals("invokevirtual TestM.add(I)I",writer.out);
-    writer.writeInvoke("function", "TestM","sadd","I","int");
+    writer.writeInvoke("function", "TestM","sadd",List.of("int"),"int");
     assertEquals("invokestatic TestM.sadd(I)I",writer.out);
-    writer.writeInvoke("constructor", "TestM","<init>","II","void");
+    writer.writeInvoke("constructor", "TestM","<init>",List.of("int","int"),"void");
     assertEquals("invokespecial TestM.<init>(II)V",writer.out);
     writer.fileClose();
   }

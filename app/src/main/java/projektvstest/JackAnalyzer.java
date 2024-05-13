@@ -9,7 +9,7 @@ public class JackAnalyzer{
     
     public static void main(String[] args){
         String fileName = args[0];
-        Map<String,String> methodMap = new HashMap<>();
+        CheckMethods cM = new CheckMethods();
         if(fileName.endsWith(".jack")){
             translateFile(fileName);
         }else{
@@ -19,15 +19,15 @@ public class JackAnalyzer{
                 if (listofFile.isFile() & listofFile.getName().endsWith(".jack")) {
                     translateFile(listofFile.getPath());
                     String writeFileName =  listofFile.getPath().substring(0, listofFile.getPath().indexOf(".")) + "MyT.xml";
-                    CheckMethods cM = new CheckMethods(writeFileName);
-                    methodMap.putAll(cM.check());
+                    cM.setReadFile(writeFileName);
+                    cM.check();
                 }
             }
             //Compilation
             for (File listofFile : listofFiles) {
                 if (listofFile.isFile() & listofFile.getName().endsWith(".jack")) {
                     String writeFileName =  listofFile.getPath().substring(0, listofFile.getPath().indexOf(".")) + "MyT.xml";
-                    CompilationEngine engine = new CompilationEngine(writeFileName, listofFile.getPath(), methodMap);
+                    CompilationEngine engine = new CompilationEngine(writeFileName, listofFile.getPath(), cM);
                     engine.compileClass();
                 }
             }

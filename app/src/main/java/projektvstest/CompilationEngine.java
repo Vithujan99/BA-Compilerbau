@@ -19,12 +19,12 @@ public class CompilationEngine{
     String subroutineFuncKind;
     String subroutineParameterTypes;
     String subroutineReturnType;
-    Map<String, String> methodsMap;
-    String callingParameterTypes;
+    CheckMethods cM;
     String callingReturnType;
+    Integer labelCounter;
     String tab;
 
-    public CompilationEngine(String input, String output, Map<String,String> map){
+    public CompilationEngine(String input, String output, CheckMethods checkMethods){
         try{
             readFile = new Scanner(new File(input)); 
         }catch(FileNotFoundException e) {
@@ -33,8 +33,9 @@ public class CompilationEngine{
         }
         jasWriter = new JasminWriter(output);
         table = new SymbolTable();
-        methodsMap = map;
-        callingParameterTypes ="";
+        cM = checkMethods;
+        callingReturnType = "";
+        labelCounter = 0;
         tab = "";
     }
 
@@ -183,7 +184,7 @@ public class CompilationEngine{
         if(subroutineFuncKind.equals("constructor")){
             jasWriter.writeLoad(0, "object");
             // dup ????
-            jasWriter.writeInvoke("constructor","java/lang/Object","<init>","","void");
+            jasWriter.writeInvoke("constructor","java/lang/Object","<init>",null,"void");
         }
         compileStatements();
 
@@ -253,39 +254,46 @@ public class CompilationEngine{
     }
 
     public void compileIf(){
-        //write("ifStatement");
+        Integer ifCounter = labelCounter;
+        labelCounter += 2;
         increaseTab();
         process("if");
         process("(");
         compileExpression();//expression
         process(")");
+        jasWriter.writeIf("ifL",ifCounter);
         process("{");
         compileStatements();
         process("}");
-
+        jasWriter.writeGoto("ifL",ifCounter+1);
+        jasWriter.writeLabel("ifL",ifCounter);
         if(currentLine.contains("else")){
             process("else");
             process("{");
             compileStatements();
             process("}");
         }
-
+        jasWriter.writeLabel("ifL",ifCounter+1);
         decreaseTab();
-        //write("/ifStatement"); 
     }
 
     public void compileWhile(){
-        //write("whileStatement");
+        Integer whileCounter = labelCounter;
+        labelCounter += 2;
         increaseTab();
+        jasWriter.writeLabel("whileL", whileCounter + 1);
         process("while");
         process("(");
         compileExpression();//Expression
+        jasWriter.writeIf("whileL", whileCounter);
         process(")");
         process("{");
         compileStatements();
         process("}");
+        jasWriter.writeGoto("whileL",whileCounter + 1);
+        jasWriter.writeLabel("whileL", whileCounter);
         decreaseTab();
-        //write("/whileStatement"); 
+
     }
 
     public void compileDo(){
@@ -298,12 +306,13 @@ public class CompilationEngine{
         process(";");
         //Do statements ingorieren ihren return Value.
         //Problem wenn println aufgerufen wird kann nicht pop aufgerufen werden, weil nichts auf dem Stack ist.
-        //jasWriter.writePop();
+        if(!callingReturnType.equals("void")){
+            jasWriter.writePop();
+        }
+
     }
 
     public void compileReturn(){
-       // write("returnStatement");
-        
         process("return");
         //contains keyword --> NULL is a keyword
         if(currentLine.contains("identifier")||currentLine.contains("(")
@@ -343,33 +352,39 @@ public class CompilationEngine{
                 process("identifier");
 
                 //Gilt nur für OS Klassen
-                if(os.stream().anyMatch(lastLine::contains)){
+                if(lastLine.contains("Output")){
                     jasWriter.getStatic(lastLine);
                 }
-
+                //cllingParameterTypes muss hier verarbeitet werden.
                 process("(");
                 compileExpressionList();
                 process(")");
 
                 //Calling the Subroutine
-                String fullName = "Main" + "." + callingSubName;
-                String typeOfFullName = methodsMap.get(fullName);
+                String fullName;
+                if(table.existInSubT(lastLine)||table.existInClassT(lastLine)){
+                    fullName = table.typeOf(lastLine) + "." + callingSubName;
+                }else{
+                    fullName = lastLine + "." + callingSubName;
+                }
+
                 if(os.stream().noneMatch(lastLine::contains)){
-                    if(callingSubName.equals("new")){
+                    String typeOfFullName = cM.getMethodType(fullName);
+                    if(cM.getMethodKind(fullName).equals("constructor")){
                         //is a Constructor
                         jasWriter.writeNew(lastLine);
-                        jasWriter.writeInvoke("constructor",lastLine, "<init>", callingParameterTypes,"void");
-                    }else if(table.existInClassT(lastLine)||table.existInSubT(lastLine)){
+                        jasWriter.writeInvoke("constructor", lastLine, "<init>", cM.getMethodParamTypes(fullName),typeOfFullName);
+                    }else if(cM.getMethodKind(fullName).equals("method")){
                         //is a Method
-                        jasWriter.writeInvoke("method",table.typeOf(lastLine), callingSubName, callingParameterTypes,typeOfFullName);
-
+                        jasWriter.writeInvoke("method",table.typeOf(lastLine), callingSubName, cM.getMethodParamTypes(fullName),typeOfFullName);
                     }else{
                         //is a function
-                        jasWriter.writeInvoke("function",lastLine, callingSubName, callingParameterTypes,typeOfFullName);
+                        jasWriter.writeInvoke("function",lastLine, callingSubName, cM.getMethodParamTypes(fullName),typeOfFullName);
                     }
-
+                    callingReturnType = typeOfFullName;
                 }else{
                     jasWriter.writeInvokeOS(lastLine , callingSubName);
+                    callingReturnType = "void";
                 }
 
             }else if(currentLine.contains("[")){
@@ -377,32 +392,44 @@ public class CompilationEngine{
                 process("[");
                 compileExpression();
                 process("]");
-            }else if(currentLine.contains("(")){//subroutineCall
+            }else if(currentLine.contains("(")){//calling a static function in the same Class
                 // writeLastLine(lastLine);
                 process("(");
                 compileExpressionList();
                 process(")");
+                String fullName = className + "." + lastLine;
+                jasWriter.writeInvoke("function",className, lastLine, cM.getMethodParamTypes(fullName),cM.getMethodType(fullName));
+                callingReturnType = cM.getMethodType(fullName);
             }else{
-                // writeLastLine(lastLine);
-                //Test Commit
+                getOutOfTable(lastLine);
             }
         }else if(currentLine.contains("(")){ //(expression)
             process("(");
             compileExpression();
             process(")");
         }else if(unaryOP.stream().anyMatch(uo -> currentLine.contains(uo))){
+            String uOp = removeExtraS(currentLine);
             process(currentLine);
             compileTerm();
+            if(uOp.equals("-")){
+                uOp = "neg";
+            }
+            jasWriter.writeArithmetic(uOp);
         }else if(currentLine.contains("stringConstant")){
-            process(currentLine);
+            String s = removeExtraS(currentLine);
+            jasWriter.writeLdc(removeExtraS(currentLine));
+          process(currentLine);
         }else if(currentLine.contains("integerConstant")||currentLine.contains("keyword")){
-            if(currentLine.contains("this")){
-                process(currentLine);
-            }else if(currentLine.contains("true")){
+            if(currentLine.contains("true")){
                 jasWriter.writeBiPush(1);
                 process(currentLine);
             }else if(currentLine.contains("false")){
                 jasWriter.writeBiPush(0);
+                process(currentLine);
+            }else if(currentLine.contains("null")){
+                jasWriter.writeAconst("null");
+                process(currentLine);
+            }else if(currentLine.contains("this")){
                 process(currentLine);
             }else{
                 jasWriter.writeBiPush(Integer.parseInt(removeExtraS(currentLine)));
@@ -434,7 +461,6 @@ public class CompilationEngine{
     }
 
     public void compileExpressionList(){
-        //write("expressionList");
         increaseTab();
         if(currentLine.contains("identifier")||currentLine.contains("(")
             ||currentLine.contains("keyword")
@@ -448,7 +474,6 @@ public class CompilationEngine{
             }
         } 
         decreaseTab();
-        //write("/expressionList"); 
     }
 
     // public void writeLastLine(String str){
