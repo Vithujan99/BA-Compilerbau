@@ -23,6 +23,7 @@ public class CompilationEngine{
     String callingReturnType;
     Integer labelCounter;
     String tab;
+    String arithmeticType;
 
     public CompilationEngine(String input, String output, CheckMethods checkMethods){
         try{
@@ -36,6 +37,7 @@ public class CompilationEngine{
         cM = checkMethods;
         callingReturnType = "";
         labelCounter = 0;
+        arithmeticType = "int";
         tab = "";
     }
 
@@ -335,7 +337,7 @@ public class CompilationEngine{
             String operation = removeExtraS(currentLine);
             process(currentLine);
             compileTerm();
-            jasWriter.writeArithmetic(operation);
+            jasWriter.writeArithmetic(operation,arithmeticType);
         }
     }
 
@@ -345,34 +347,38 @@ public class CompilationEngine{
             String lastLine = removeExtraS(currentLine);
             move();
             if(currentLine.contains(".")){ //subroutineCall
-                getOutOfTable(lastLine);//z.b aload_0
+
 
                 process(".");
                 callingSubName = removeExtraS(currentLine);
                 process("identifier");
 
-                //Gilt nur für OS Klassen
-                if(lastLine.contains("Output")){
-                    jasWriter.getStatic(lastLine);
+                //Loading the Subroutine
+                String fullName;
+                if(table.existInSubT(lastLine)||table.existInClassT(lastLine)){
+                    fullName = table.typeOf(lastLine) + "." + callingSubName;
+                    //z.b aload_0; Wird nur aufgerufen wenn diese existiert.
+                    getOutOfTable(lastLine);
+                }else{
+                    fullName = lastLine + "." + callingSubName;
+                    //Gilt nur für OS Klassen
+                    if(fullName.contains("Output")){
+                        jasWriter.getStatic(lastLine);
+                    }else if(cM.getMethodKind(fullName).equals("constructor")) {
+                        jasWriter.writeNew(lastLine);//Muss vor Expression aufgerufen werden.
+                    }
                 }
+
                 //cllingParameterTypes muss hier verarbeitet werden.
                 process("(");
                 compileExpressionList();
                 process(")");
 
                 //Calling the Subroutine
-                String fullName;
-                if(table.existInSubT(lastLine)||table.existInClassT(lastLine)){
-                    fullName = table.typeOf(lastLine) + "." + callingSubName;
-                }else{
-                    fullName = lastLine + "." + callingSubName;
-                }
-
                 if(os.stream().noneMatch(lastLine::contains)){
                     String typeOfFullName = cM.getMethodType(fullName);
                     if(cM.getMethodKind(fullName).equals("constructor")){
                         //is a Constructor
-                        jasWriter.writeNew(lastLine);
                         jasWriter.writeInvoke("constructor", lastLine, "<init>", cM.getMethodParamTypes(fullName),typeOfFullName);
                     }else if(cM.getMethodKind(fullName).equals("method")){
                         //is a Method
@@ -382,6 +388,7 @@ public class CompilationEngine{
                         jasWriter.writeInvoke("function",lastLine, callingSubName, cM.getMethodParamTypes(fullName),typeOfFullName);
                     }
                     callingReturnType = typeOfFullName;
+                    arithmeticType = callingReturnType;
                 }else{
                     jasWriter.writeInvokeOS(lastLine , callingSubName);
                     callingReturnType = "void";
@@ -400,8 +407,11 @@ public class CompilationEngine{
                 String fullName = className + "." + lastLine;
                 jasWriter.writeInvoke("function",className, lastLine, cM.getMethodParamTypes(fullName),cM.getMethodType(fullName));
                 callingReturnType = cM.getMethodType(fullName);
+                arithmeticType = callingReturnType;
             }else{
+                System.out.println(lastLine);
                 getOutOfTable(lastLine);
+                arithmeticType = table.typeOf(lastLine);
             }
         }else if(currentLine.contains("(")){ //(expression)
             process("(");
@@ -414,26 +424,35 @@ public class CompilationEngine{
             if(uOp.equals("-")){
                 uOp = "neg";
             }
-            jasWriter.writeArithmetic(uOp);
+            jasWriter.writeArithmetic(uOp,"int");
         }else if(currentLine.contains("stringConstant")){
             String s = removeExtraS(currentLine);
             jasWriter.writeLdc(removeExtraS(currentLine));
-          process(currentLine);
+            process(currentLine);
+            arithmeticType = "Object";
         }else if(currentLine.contains("integerConstant")||currentLine.contains("keyword")){
             if(currentLine.contains("true")){
                 jasWriter.writeBiPush(1);
                 process(currentLine);
+                arithmeticType = "int";
             }else if(currentLine.contains("false")){
                 jasWriter.writeBiPush(0);
                 process(currentLine);
+                arithmeticType = "int";
             }else if(currentLine.contains("null")){
                 jasWriter.writeAconst("null");
                 process(currentLine);
+                arithmeticType = "Object";
             }else if(currentLine.contains("this")){
+                if(!subroutineFuncKind.contains("constructor")){
+                    getOutOfTable(removeExtraS(currentLine));
+                }
                 process(currentLine);
+                arithmeticType = "Object";
             }else{
                 jasWriter.writeBiPush(Integer.parseInt(removeExtraS(currentLine)));
                 process(currentLine);
+                arithmeticType = "int";
             }
 
         }

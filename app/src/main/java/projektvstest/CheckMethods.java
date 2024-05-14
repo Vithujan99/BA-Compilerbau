@@ -48,12 +48,19 @@ public class CheckMethods {
         fullSubName = className + "." + subName;
         move();
         List<String> paramTypes = new ArrayList<>();
-        while (!currentLine.contains(")")){
-            if(currentLine.contains("keyword")) {
-              paramTypes.add(removeExtraS(currentLine));
-            }
-            move();
+        process("(");
+        if (!currentLine.contains(")")){
+          paramTypes.add(removeExtraS(currentLine));
+          process(currentLine);
+          process("identifier");
         }
+        while(!currentLine.contains(")")){
+          process(",");
+          paramTypes.add(removeExtraS(currentLine));
+          process(currentLine);
+          process("identifier");
+        }
+        process(")");
         methods.add(new CallingSubSymbol(fullSubName, type, kind, paramTypes));
       }
       move();
@@ -75,5 +82,12 @@ public class CheckMethods {
   public List<String> getMethodParamTypes(String name){
     CallingSubSymbol s = findSymbol(name);
     return s.callingParamTypes;
+  }
+
+  private void process(String str){
+    if(!currentLine.contains(str)){
+      System.out.println("Code is Wrong in CheckMethod");
+    }
+    move();
   }
 }

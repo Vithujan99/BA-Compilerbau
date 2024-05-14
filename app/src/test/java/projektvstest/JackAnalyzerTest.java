@@ -13,11 +13,11 @@ public class JackAnalyzerTest {
     return input.replaceAll("\\s", "");
   }
   @Test void testSeven() throws IOException {
-    String[] args = {"JackFiles\\Seven"};
+    String[] args = {"CreatedJasminCode\\Seven"};
     JackAnalyzer.main(args);
     Path expectedJasminFilePath = Paths.get("ExpectedJasminCode\\Seven\\Main.j");
 
-    Path generatedJasminFilePath = Paths.get("JackFiles\\Seven\\Main.j");
+    Path generatedJasminFilePath = Paths.get("CreatedJasminCode\\Seven\\Main.j");
     assertTrue(Files.exists(generatedJasminFilePath), "Es wurde kein Jasmin Datei erzeugt.");
 
     String generatedJasminContent = removeWhitespace(Files.readString(generatedJasminFilePath));
@@ -26,20 +26,20 @@ public class JackAnalyzerTest {
   }
 
   @Test void testFieldVar() throws IOException {
-    String[] args = {"JackFiles\\FieldVar"};
+    String[] args = {"CreatedJasminCode\\FieldVar"};
     JackAnalyzer.main(args);
 
-    Path generatedJasminFilePath = Paths.get("JackFiles\\FieldVar\\Main.j");
+    Path generatedJasminFilePath = Paths.get("CreatedJasminCode\\FieldVar\\Main.j");
 
     String generatedJasminContent = Files.readString(generatedJasminFilePath);
 
     assert(generatedJasminContent.contains(".field x I\n.field static y I"));
   }
   @Test void testCompileParamList() throws IOException {
-    String[] args = {"JackFiles\\CompileSubroutine"};
+    String[] args = {"CreatedJasminCode\\CompileSubroutine"};
     JackAnalyzer.main(args);
 
-    Path generatedJasminFilePath = Paths.get("JackFiles\\CompileSubroutine\\Main.j");
+    Path generatedJasminFilePath = Paths.get("CreatedJasminCode\\CompileSubroutine\\Main.j");
     String generatedJasminContent = Files.readString(generatedJasminFilePath);
 
     assert(generatedJasminContent.contains(".method public static main([Ljava/lang/String;)V"));
@@ -52,19 +52,19 @@ public class JackAnalyzerTest {
   }
 
   @Test void testLimit() throws IOException {
-    String[] args = {"JackFiles\\Limit"};
+    String[] args = {"CreatedJasminCode\\Limit"};
     JackAnalyzer.main(args);
     Path expectedJasminFilePath = Paths.get("ExpectedJasminCode\\Limit\\Main.j");
-    Path generatedJasminFilePath = Paths.get("JackFiles\\Limit\\Main.j");
+    Path generatedJasminFilePath = Paths.get("CreatedJasminCode\\Limit\\Main.j");
     String expectedJasminContent = removeWhitespace(Files.readString(expectedJasminFilePath));
     String generatedJasminContent = removeWhitespace(Files.readString(generatedJasminFilePath));
 
     assertEquals(expectedJasminContent, generatedJasminContent, "Generierte Jasmin-Code(Limit) stimmt nicht mit dem erwartetem Code überein.");
   }
   @Test void testLetStatement() throws IOException {
-    String[] args = {"JackFiles\\StatementTest\\LetStatement"};
+    String[] args = {"CreatedJasminCode\\StatementTest\\LetStatement"};
     JackAnalyzer.main(args);
-    Path generatedJasminFilePath = Paths.get("JackFiles\\StatementTest\\LetStatement\\Main.j");
+    Path generatedJasminFilePath = Paths.get("CreatedJasminCode\\StatementTest\\LetStatement\\Main.j");
     String generatedJasminContent = Files.readString(generatedJasminFilePath);
 
     assert(generatedJasminContent.contains("""
@@ -75,9 +75,9 @@ public class JackAnalyzerTest {
 
   //--------------Compile Term Tests-----------------
   @Test void callingSubTest() throws IOException {
-    String[] args = {"JackFiles\\TermTest\\callingSubTest"};
+    String[] args = {"CreatedJasminCode\\TermTest\\callingSubTest"};
     JackAnalyzer.main(args);
-    Path generatedJasminFilePath = Paths.get("JackFiles\\TermTest\\callingSubTest\\Main.j");
+    Path generatedJasminFilePath = Paths.get("CreatedJasminCode\\TermTest\\callingSubTest\\Main.j");
     Path expectedJasminFilePath = Paths.get("ExpectedJasminCode\\TermTest\\callingSubTest\\Main.j");
     String generatedJasminContent = removeWhitespace(Files.readString(generatedJasminFilePath));
     String expectedJasminContent = removeWhitespace(Files.readString(expectedJasminFilePath));
@@ -85,18 +85,18 @@ public class JackAnalyzerTest {
 
   }
   @Test void callingInClassTest() throws IOException {
-    String[] args = {"JackFiles\\TermTest\\CallingInClass"};
+    String[] args = {"CreatedJasminCode\\TermTest\\CallingInClass"};
     JackAnalyzer.main(args);
-    Path generatedJasminFilePath = Paths.get("JackFiles\\TermTest\\CallingInClass\\Main.j");
+    Path generatedJasminFilePath = Paths.get("CreatedJasminCode\\TermTest\\CallingInClass\\Main.j");
     Path expectedJasminFilePath = Paths.get("ExpectedJasminCode\\TermTest\\CallingInClass\\Main.j");
     String generatedJasminContent = removeWhitespace(Files.readString(generatedJasminFilePath));
     String expectedJasminContent = removeWhitespace(Files.readString(expectedJasminFilePath));
     assertEquals(expectedJasminContent, generatedJasminContent, "Generierte Jasmin-Code(CallingInClass) stimmt nicht mit dem erwartetem Code überein.");
   }
   @Test void unaryOpTest() throws IOException {
-    String[] args = {"JackFiles\\TermTest\\UnaryOp"};
+    String[] args = {"CreatedJasminCode\\TermTest\\UnaryOp"};
     JackAnalyzer.main(args);
-    Path generatedJasminFilePath = Paths.get("JackFiles\\TermTest\\UnaryOp\\Main.j");
+    Path generatedJasminFilePath = Paths.get("CreatedJasminCode\\TermTest\\UnaryOp\\Main.j");
     Path expectedJasminFilePath = Paths.get("ExpectedJasminCode\\TermTest\\UnaryOp\\Main.j");
     String generatedJasminContent = removeWhitespace(Files.readString(generatedJasminFilePath));
     String expectedJasminContent = removeWhitespace(Files.readString(expectedJasminFilePath));
@@ -105,27 +105,27 @@ public class JackAnalyzerTest {
 
   //--------------Statement Tests-----------------
   @Test void doStatementTest() throws IOException {
-    String[] args = {"JackFiles\\StatementTest\\DoS"};
+    String[] args = {"CreatedJasminCode\\StatementTest\\DoS"};
     JackAnalyzer.main(args);
-    Path generatedJasminFilePath = Paths.get("JackFiles\\StatementTest\\DoS\\Main.j");
+    Path generatedJasminFilePath = Paths.get("CreatedJasminCode\\StatementTest\\DoS\\Main.j");
     Path expectedJasminFilePath = Paths.get("ExpectedJasminCode\\StatementTest\\DoS\\Main.j");
     String generatedJasminContent = removeWhitespace(Files.readString(generatedJasminFilePath));
     String expectedJasminContent = removeWhitespace(Files.readString(expectedJasminFilePath));
     assertEquals(expectedJasminContent, generatedJasminContent, "Generierte Jasmin-Code(Do Statement) stimmt nicht mit dem erwartetem Code überein.");
   }
   @Test void ifStatementTest() throws IOException {
-    String[] args = {"JackFiles\\StatementTest\\IfS"};
+    String[] args = {"CreatedJasminCode\\StatementTest\\IfS"};
     JackAnalyzer.main(args);
-    Path generatedJasminFilePath = Paths.get("JackFiles\\StatementTest\\IfS\\Main.j");
+    Path generatedJasminFilePath = Paths.get("CreatedJasminCode\\StatementTest\\IfS\\Main.j");
     Path expectedJasminFilePath = Paths.get("ExpectedJasminCode\\StatementTest\\IfS\\Main.j");
     String generatedJasminContent = removeWhitespace(Files.readString(generatedJasminFilePath));
     String expectedJasminContent = removeWhitespace(Files.readString(expectedJasminFilePath));
     assertEquals(expectedJasminContent, generatedJasminContent, "Generierte Jasmin-Code(If Statement) stimmt nicht mit dem erwartetem Code überein.");
   }
   @Test void whileStatementTest() throws IOException {
-    String[] args = {"JackFiles\\StatementTest\\WhileS"};
+    String[] args = {"CreatedJasminCode\\StatementTest\\WhileS"};
     JackAnalyzer.main(args);
-    Path generatedJasminFilePath = Paths.get("JackFiles\\StatementTest\\WhileS\\Main.j");
+    Path generatedJasminFilePath = Paths.get("CreatedJasminCode\\StatementTest\\WhileS\\Main.j");
     Path expectedJasminFilePath = Paths.get("ExpectedJasminCode\\StatementTest\\WhileS\\Main.j");
     String generatedJasminContent = removeWhitespace(Files.readString(generatedJasminFilePath));
     String expectedJasminContent = removeWhitespace(Files.readString(expectedJasminFilePath));

@@ -17,7 +17,7 @@ public class JasminWriterTest {
     return input.replaceAll("\\s", "");
   }
   @Test void testWriteFieldVar() throws IOException {
-    JasminWriter writer = new JasminWriter("JackFiles\\AClassTest\\JasminWriterTest\\TestWriteFieldVar.jack");
+    JasminWriter writer = new JasminWriter("CreatedJasminCode\\AClassTest\\JasminWriterTest\\TestWriteFieldVar.jack");
     writer.writeFieldVar("field","x","int");
     assertEquals(".field x I",writer.out);
     writer.writeFieldVar("static","d","int");
@@ -30,7 +30,7 @@ public class JasminWriterTest {
   }
 
   @Test void testWriteInvoke(){
-    JasminWriter writer = new JasminWriter("JackFiles\\AClassTest\\JasminWriterTest\\TestWriteInvoke.jack");
+    JasminWriter writer = new JasminWriter("CreatedJasminCode\\AClassTest\\JasminWriterTest\\TestWriteInvoke.jack");
     writer.writeInvoke("method", "TestM","add", List.of("int"),"int");
     assertEquals("invokevirtual TestM.add(I)I",writer.out);
     writer.writeInvoke("function", "TestM","sadd",List.of("int"),"int");
@@ -40,7 +40,7 @@ public class JasminWriterTest {
     writer.fileClose();
   }
   @Test void testWriteFuntion(){
-    JasminWriter writer = new JasminWriter("JackFiles\\AClassTest\\JasminWriterTest\\TestWriteFunction.jack");
+    JasminWriter writer = new JasminWriter("CreatedJasminCode\\AClassTest\\JasminWriterTest\\TestWriteFunction.jack");
     writer.writeFunction("function", "main", "[Ljava/lang/String;","void");
     assertEquals(writer.out,".method public static main([Ljava/lang/String;)V");
     writer.writeFunction("constructor","<init>","II","void");
@@ -50,14 +50,14 @@ public class JasminWriterTest {
     writer.fileClose();
   }
   @Test void testWriteReturn() throws IOException {
-    JasminWriter writer = new JasminWriter("JackFiles\\AClassTest\\JasminWriterTest\\TestWriteReturn.jack");
+    JasminWriter writer = new JasminWriter("CreatedJasminCode\\AClassTest\\JasminWriterTest\\TestWriteReturn.jack");
     writer.writeReturn("int");
     writer.writeReturn("boolean");
     writer.writeReturn("String");
     writer.writeReturn("RKlasse");
     writer.writeReturn("void");
     writer.fileClose();
-    Path generatedJasminFilePath = Paths.get("JackFiles\\AClassTest\\JasminWriterTest\\TestWriteReturn.j");
+    Path generatedJasminFilePath = Paths.get("CreatedJasminCode\\AClassTest\\JasminWriterTest\\TestWriteReturn.j");
     String generatedJasminContent = Files.readString(generatedJasminFilePath);
     assertEquals("""
             ireturn

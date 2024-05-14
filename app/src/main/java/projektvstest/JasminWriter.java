@@ -85,7 +85,7 @@ public class JasminWriter {
         write("ldc" + " \"" + s + "\"");
     }
     public void writeAconst(String s){
-
+        write("aconst_" + s);
     }
 
 //writepush unterteilt------------------------------------------
@@ -103,6 +103,9 @@ public class JasminWriter {
     public void writeGet(String kind, String className, String varName, String type){
         //t hier bestimmen oder lieber auserhalb und ausprobieren ob V und A stimmen
         String t = getJasminType(type);
+        if(kind.equals("field")){
+            writeLoad(0,"object");
+        }
         out ="get" + kind + " " + className + "." + varName + " " + t;
         
         write(out);
@@ -173,9 +176,13 @@ public class JasminWriter {
         }
     }
 
-    public void writeArithmetic(String command){
-        //Später für duble!!
-        String type = "Integer";
+    public void writeArithmetic(String command, String arithmeticType){
+        String type;
+        if(arithmeticType.equals("int")||arithmeticType.equals("boolean")||arithmeticType.equals("char")){
+            type = "i";
+        }else{
+            type = "a";
+        }
         switch (command) {
             case "+":
                 out = "iadd";
@@ -204,7 +211,7 @@ public class JasminWriter {
                 out = "if_icmple " +"jump"+(jumpCounter)+ "\n"+ writeJumpArithmetic();
                 break;
             case "=":
-                out = "if_icmpne " +"jump"+(jumpCounter)+ "\n"+ writeJumpArithmetic();
+                out = "if_"+type+"cmpne " +"jump"+(jumpCounter)+ "\n"+ writeJumpArithmetic();
                 break;
             case "neg":
                 out = "ineg";//???
