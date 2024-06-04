@@ -22,8 +22,8 @@ public class JasminWriterTest {
     assertEquals(".field x I",writer.out);
     writer.writeFieldVar("static","d","int");
     assertEquals(".field static d I",writer.out);
-    writer.writeFieldVar("field","s","String");
-    assertEquals(".field s Ljava/lang/String;",writer.out);
+    writer.writeFieldVar("field","s","OS/String");
+    assertEquals(".field s LOS/String;",writer.out);
     writer.writeFieldVar("field","b","boolean");
     assertEquals(".field b Z",writer.out);
     writer.fileClose();
@@ -41,8 +41,8 @@ public class JasminWriterTest {
   }
   @Test void testWriteFuntion(){
     JasminWriter writer = new JasminWriter("CreatedJasminCode\\AClassTest\\JasminWriterTest\\TestWriteFunction.jack");
-    writer.writeFunction("function", "main", "[Ljava/lang/String;","void");
-    assertEquals(writer.out,".method public static main([Ljava/lang/String;)V");
+    writer.writeFunction("function", "main", "[LOS/String;","void");
+    assertEquals(writer.out,".method public static main([LOS/String;)V");
     writer.writeFunction("constructor","<init>","II","void");
     assertEquals(writer.out,".method public <init>(II)V");
     writer.writeFunction("method", "add","I","int");

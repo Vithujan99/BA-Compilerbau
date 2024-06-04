@@ -9,8 +9,12 @@
 .method public static main([Ljava/lang/String;)V
     .limit stack 10
     .limit locals 3
+    new OS/Sys
+    dup
+    invokespecial OS/Sys.<init>()V
+    pop
 .end method
-.method public add(ILjava/lang/String;I)I
+.method public add(ILOS/String;I)I
     .limit stack 10
     .limit locals 4
 .end method

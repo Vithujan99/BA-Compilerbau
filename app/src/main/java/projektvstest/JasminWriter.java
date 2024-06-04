@@ -35,7 +35,7 @@ public class JasminWriter {
             case "boolean" -> "Z";
             case "char" -> "C";
             case "void" -> "V";
-            case "String" -> "Ljava/lang/String;";
+            case "Array" -> "[Ljava/lang/Integer";
             default -> "L" + type + ";";
         };
     }
@@ -78,8 +78,31 @@ public class JasminWriter {
     public void writeNew(String className){
         write("new "+ className + "\ndup");
     }
-    public void writeBiPush(int number) {
-        write("bipush " + number);
+
+    public void writeDup(){write("dup");}
+
+
+//writepush unterteilt------------------------------------------
+    //bipush nur für Integer
+    //noch eins für String ldc <Hallo World!>
+
+    public void writeNumberPush(int number) {
+        if(number == -1){
+            write("iconst_m1");
+        }else{
+            String push;
+            if(number <= 5 && number >=0){
+                push = "iconst_";
+            }else if(number <= 127 && number >=-127){
+                push = "bipush ";
+            }else if(number <= 32767 && number >=-32767){
+                push = "sipush ";
+            }else{
+                push = "ldc ";
+            }
+            write(push + number);
+        }
+
     }
     public void writeLdc(String s){
         write("ldc" + " \"" + s + "\"");
@@ -87,10 +110,6 @@ public class JasminWriter {
     public void writeAconst(String s){
         write("aconst_" + s);
     }
-
-//writepush unterteilt------------------------------------------
-    //bipush nur für Integer
-    //noch eins für String ldc <Hallo World!>
 
     public void writeLoad(Integer index, String type){
         if (type.equals("int")||type.equals("boolean")||type.equals("char")){
@@ -226,10 +245,10 @@ public class JasminWriter {
     }
 
     private String writeJumpArithmetic(){
-        String out = "bipush 1" + "\n"+
+        String out = "iconst_1" + "\n"+
         "goto jump"+(jumpCounter+1)+ "\n"+
         "jump"+(jumpCounter)+":" + "\n"+
-        "bipush 0" + "\n"+
+        "iconst_0" + "\n"+
         "jump"+(jumpCounter+1)+":";
         jumpCounter += 2;
         return out;

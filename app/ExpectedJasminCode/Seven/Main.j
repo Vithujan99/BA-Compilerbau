@@ -4,13 +4,15 @@
 .method public static main([Ljava/lang/String;)V
 	.limit stack 10
     .limit locals 1
-
-		getstatic java/lang/System.out Ljava/io/PrintStream;
-        bipush 1
-        bipush 2
-        bipush 3
+    new OS/Sys
+    dup
+    invokespecial OS/Sys.<init>()V
+    pop
+        iconst_1
+        iconst_2
+        iconst_3
         imul
         iadd
-		invokevirtual java/io/PrintStream.print(I)V
+		invokestatic OS/Output.printInt(I)V
         return
 .end method

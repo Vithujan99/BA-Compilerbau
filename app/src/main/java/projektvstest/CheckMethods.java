@@ -12,6 +12,74 @@ public class CheckMethods {
 
   public CheckMethods(){
     methods = new ArrayList<>();
+    initOSMethods();
+  }
+  private void initOSMethods(){
+    String className;
+    //Für Math
+    className = "OS/Math";
+    methods.add(new CallingSubSymbol(className + ".new", "void", "constructor", List.of()));
+    methods.add(new CallingSubSymbol(className + ".bit", "boolean", "function", List.of("int","int")));
+    methods.add(new CallingSubSymbol(className + ".abs", "int", "function", List.of("int")));
+    methods.add(new CallingSubSymbol(className + ".multiply", "int", "function", List.of("int","int")));
+    methods.add(new CallingSubSymbol(className + ".divide", "int", "function", List.of("int","int")));
+    methods.add(new CallingSubSymbol(className + ".sqrt", "int", "function", List.of("int")));
+    methods.add(new CallingSubSymbol(className + ".max", "int", "function", List.of("int","int")));
+    methods.add(new CallingSubSymbol(className + ".min", "int", "function", List.of("int","int")));
+    //Für Memory
+    className = "OS/Memory";
+    methods.add(new CallingSubSymbol(className + ".new", "void", "constructor", List.of()));
+    methods.add(new CallingSubSymbol(className + ".peek", "int", "function", List.of("int")));
+    methods.add(new CallingSubSymbol(className + ".poke", "void", "function", List.of("int","int")));
+    methods.add(new CallingSubSymbol(className + ".alloc", "int", "function", List.of("int")));
+    methods.add(new CallingSubSymbol(className + ".deAlloc", "int", "function", List.of("Array")));
+    //Für Screen
+    className = "OS/Screen";
+    methods.add(new CallingSubSymbol(className + ".new", "void", "constructor", List.of()));
+    methods.add(new CallingSubSymbol(className + ".clearScreen", "void", "function", List.of()));
+    methods.add(new CallingSubSymbol(className + ".setColor", "void", "function", List.of("boolean")));
+    methods.add(new CallingSubSymbol(className + ".drawPixel", "void", "function", List.of("int","int")));
+    methods.add(new CallingSubSymbol(className + ".drawLine", "void", "function", List.of("int","int","int","int")));
+    methods.add(new CallingSubSymbol(className + ".drawRectangle", "void", "function", List.of("int","int","int","int")));
+    methods.add(new CallingSubSymbol(className + ".drawCircle", "void", "function", List.of("int","int","int")));
+    //Für Output
+    className = "OS/Output";
+    methods.add(new CallingSubSymbol(className + ".new", "void", "constructor", List.of()));
+    methods.add(new CallingSubSymbol(className + ".moveCursor", "void", "function", List.of("int","int")));
+    methods.add(new CallingSubSymbol(className + ".printChar", "void", "function", List.of("char")));
+    methods.add(new CallingSubSymbol(className + ".printString", "void", "function", List.of("OS/String")));
+    methods.add(new CallingSubSymbol(className + ".printInt", "void", "function", List.of("int")));
+    methods.add(new CallingSubSymbol(className + ".println", "void", "function", List.of()));
+    methods.add(new CallingSubSymbol(className + ".backSpace", "void", "function", List.of()));
+    //Für Keyboard
+    className = "OS/Keyboard";
+    methods.add(new CallingSubSymbol(className + ".new", "void", "constructor", List.of()));
+    methods.add(new CallingSubSymbol(className + ".keyPressed", "char", "function", List.of()));
+    methods.add(new CallingSubSymbol(className + ".readChar", "char", "function", List.of()));
+    methods.add(new CallingSubSymbol(className + ".readLine", "OS/String", "function", List.of("OS/String")));
+    methods.add(new CallingSubSymbol(className + ".readInt", "int", "function", List.of("OS/String")));
+    //Für String
+    className = "OS/String";
+    methods.add(new CallingSubSymbol(className + ".new", "void", "constructor", List.of("int")));
+    methods.add(new CallingSubSymbol(className + ".dispose", "void", "method", List.of()));
+    methods.add(new CallingSubSymbol(className + ".length", "int", "method", List.of()));
+    methods.add(new CallingSubSymbol(className + ".charAt", "char", "method", List.of("int")));
+    methods.add(new CallingSubSymbol(className + ".setCharAt", "void", "method", List.of("int","char")));
+    methods.add(new CallingSubSymbol(className + ".appendChar", "OS/String", "method", List.of("char")));
+    methods.add(new CallingSubSymbol(className + ".eraseLastChar", "void", "method", List.of()));
+    methods.add(new CallingSubSymbol(className + ".intValue", "int", "method", List.of()));
+    methods.add(new CallingSubSymbol(className + ".setInt", "void", "method", List.of("int")));
+    methods.add(new CallingSubSymbol(className + ".setIntCalc", "void", "method", List.of("int")));
+    methods.add(new CallingSubSymbol(className + ".newLine", "char", "function", List.of()));
+    methods.add(new CallingSubSymbol(className + ".backSpace", "char", "function", List.of()));
+    methods.add(new CallingSubSymbol(className + ".doubleQuote", "char", "function", List.of()));
+    //Für Sys
+    className = "OS/Sys";
+    methods.add(new CallingSubSymbol(className + ".new", "void", "constructor", List.of()));
+    methods.add(new CallingSubSymbol(className + ".halt", "void", "function", List.of()));
+    methods.add(new CallingSubSymbol(className + ".wait", "void", "function", List.of("int")));
+    methods.add(new CallingSubSymbol(className + ".error", "void", "function", List.of("int")));
+
   }
   public void setReadFile(String input){
     try{

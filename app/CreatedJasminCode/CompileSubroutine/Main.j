@@ -9,6 +9,22 @@ invokespecial java/lang/Object.<init>()V
 .method public static main([Ljava/lang/String;)V
 .limit stack 10
 .limit locals 1
+new OS/Output
+dup
+invokespecial OS/Output.<init>()V
+pop
+new OS/Screen
+dup
+invokespecial OS/Screen.<init>()V
+pop
+new OS/Memory
+dup
+invokespecial OS/Memory.<init>()V
+pop
+new OS/Math
+dup
+invokespecial OS/Math.<init>()V
+pop
 .end method
 .method public add(I)I
 .limit stack 10

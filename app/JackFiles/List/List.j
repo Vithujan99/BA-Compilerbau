@@ -38,25 +38,23 @@ whileL1:
 aload 1
 aconst_null
 if_acmpne jump0
-bipush 1
+iconst_1
 goto jump1
 jump0:
-bipush 0
+iconst_0
 jump1:
 ifne jump2
-bipush 1
+iconst_1
 goto jump3
 jump2:
-bipush 0
+iconst_0
 jump3:
 ifeq whileL0
-getstatic java/lang/System.out Ljava/io/PrintStream;
 aload 1
 invokevirtual List.getData()I
-invokevirtual java/io/PrintStream.print(I)V
-getstatic java/lang/System.out Ljava/io/PrintStream;
+invokestatic OS/Output.printInt(I)V
 bipush 32
-invokevirtual java/io/PrintStream.print(C)V
+invokestatic OS/Output.printChar(C)V
 aload 1
 invokevirtual List.getNext()LList;
 astore 1
@@ -71,16 +69,16 @@ aload 0
 getfield List.next LList;
 aconst_null
 if_acmpne jump4
-bipush 1
+iconst_1
 goto jump5
 jump4:
-bipush 0
+iconst_0
 jump5:
 ifne jump6
-bipush 1
+iconst_1
 goto jump7
 jump6:
-bipush 0
+iconst_0
 jump7:
 ifeq ifL2
 aload 0

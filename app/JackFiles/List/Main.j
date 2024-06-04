@@ -3,18 +3,34 @@
 .method public static main([Ljava/lang/String;)V
 .limit stack 10
 .limit locals 2
+new OS/Output
+dup
+invokespecial OS/Output.<init>()V
+pop
+new OS/Screen
+dup
+invokespecial OS/Screen.<init>()V
+pop
+new OS/Memory
+dup
+invokespecial OS/Memory.<init>()V
+pop
+new OS/Math
+dup
+invokespecial OS/Math.<init>()V
+pop
 new List
 dup
-bipush 5
+iconst_5
 aconst_null
 invokespecial List.<init>(ILList;)V
 astore 1
 new List
 dup
-bipush 2
+iconst_2
 new List
 dup
-bipush 3
+iconst_3
 aload 1
 invokespecial List.<init>(ILList;)V
 invokespecial List.<init>(ILList;)V

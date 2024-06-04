@@ -4,20 +4,22 @@
 .method public static main([Ljava/lang/String;)V
     .limit stack 10
     .limit locals 2
+    new OS/Sys
+    dup
+    invokespecial OS/Sys.<init>()V
+    pop
     invokestatic Main.test()Z
     istore 1
-    getstatic java/lang/System.out Ljava/io/PrintStream;
     iload 1
-    invokevirtual java/io/PrintStream.print(I)V
+    invokestatic OS/Output.printInt(I)V
     return
 .end method
 
 .method public static test()Z
     .limit stack 10
     .limit locals 0
-    getstatic java/lang/System.out Ljava/io/PrintStream;
-    bipush 5
-    invokevirtual java/io/PrintStream.print(I)V
-    bipush 1
+    iconst_5
+    invokestatic OS/Output.printInt(I)V
+    iconst_1
     ireturn
 .end method

@@ -8,7 +8,7 @@
     aload 0
     invokespecial java/lang/Object.<init>()V
     aload 0
-    bipush 5
+    iconst_5
     putfield Main.x I
     return
 .end method
@@ -16,6 +16,10 @@
 .method public static main([Ljava/lang/String;)V
     .limit stack 10
     .limit locals 3
+    new OS/Sys
+    dup
+    invokespecial OS/Sys.<init>()V
+    pop
     new Main
     dup
     invokespecial Main.<init>()V
@@ -24,21 +28,20 @@
     invokestatic Main.test()Z
     invokevirtual Main.add(Z)I
     istore 1
-    getstatic java/lang/System.out Ljava/io/PrintStream;
     iload 1
-    invokevirtual java/io/PrintStream.print(I)V
+    invokestatic OS/Output.printInt(I)V
     return
 .end method
 
 .method public add(Z)I
     .limit stack 10
     .limit locals 2
-    bipush 5
+    iconst_5
     ireturn
 .end method
 .method public static test()Z
     .limit stack 10
     .limit locals 0
-    bipush 1
+    iconst_1
     ireturn
 .end method

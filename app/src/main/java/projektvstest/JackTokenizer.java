@@ -10,7 +10,7 @@ public class JackTokenizer{
     List<String> symbol = List.of("{","}","(",")","[","]",".",",",";","+","-","*","/","&","|","<",">","=","~");
     Scanner tokenFile;
     String currentLine;
-    String[] currentWords;
+    List<String> currentWords;
     String currentWord;
     boolean multiComment;
     boolean isString;
@@ -20,7 +20,7 @@ public class JackTokenizer{
         posistion = 2;
         multiComment = false;
         isString = false;
-        currentWords = "Hallo Schüss".split(" ");
+        currentWords = List.of("Hallo","Schüss");
         try{
             tokenFile = new Scanner(new File(fileName)); 
         }catch(FileNotFoundException e) {
@@ -38,35 +38,70 @@ public class JackTokenizer{
             return;
         }
         //schaut ob wir am ende unseres aktuellen Zeile sind
-        if(posistion >= currentWords.length){
+        if(posistion >= currentWords.size()){
             currentLine = tokenFile.nextLine().trim();
             if(!checkComment()){
                 return;
             }
             currentLine = currentLine.split("//")[0];
-            if(currentLine.length() > 1){
-                for(int i = 0; i < symbol.size(); i++){
-                    if(currentLine.contains(symbol.get(i))){
-                        currentLine = currentLine.replace(symbol.get(i), " " + symbol.get(i) + " ");
-                    }
-                }
+            if(currentLine.length() >= 1){
+                currentWords = tokenizeLine(currentLine);
             }
-            currentWords = currentLine.split(" ");
             posistion = 0;
         }
         //Tests if String
-        if(currentWords[posistion].startsWith("\"")){
-            currentWord = currentWords[posistion] + " ";
-            while(!currentWords[posistion++].endsWith("\"")){
-                currentWord = currentWord + currentWords[posistion] + " ";
+        if(currentWords.get(posistion).startsWith("\"")){
+            currentWord = currentWords.get(posistion) + " ";
+            while(!currentWords.get(posistion).endsWith("\"")){
+                posistion++;
+                currentWord = currentWord + currentWords.get(posistion) + " ";
             }
+            posistion++;
         }else{
-            currentWord = currentWords[posistion++];
+            currentWord = currentWords.get(posistion++);
         }
     }
 
+    private List<String> tokenizeLine(String line) {
+        List<String> tokens = new ArrayList<>();
+        StringBuilder token = new StringBuilder();
+        boolean inString = false;
+        for (char c : line.toCharArray()) {
+            if (c == '\"') {
+                if (inString) {
+                    token.append(c);
+                    tokens.add(token.toString());
+                    token.setLength(0);
+                } else {
+                    if (token.length() > 0) {
+                        tokens.add(token.toString());
+                        token.setLength(0);
+                    }
+                    token.append(c);
+                }
+                inString = !inString;
+            } else if (inString) {
+                token.append(c);
+            } else if (symbol.contains(String.valueOf(c)) || c == ' ') {
+                if (token.length() > 0) {
+                    tokens.add(token.toString());
+                    token.setLength(0);
+                }
+                if (symbol.contains(String.valueOf(c))) {
+                    tokens.add(String.valueOf(c));
+                }
+            } else {
+                token.append(c);
+            }
+        }
+        if (token.length() > 0) {
+            tokens.add(token.toString());
+        }
+        return tokens;
+    }
+
     public boolean checkComment(){
-        while(currentLine.equals("")||currentLine.startsWith("\\")
+        while(currentLine.equals("")||currentLine.startsWith("//")
         ||currentLine.startsWith("/**")||currentLine.startsWith("*/")
         ||currentLine.endsWith("*/")||currentLine.startsWith("*")){
             if(!hasMoreTokens()){

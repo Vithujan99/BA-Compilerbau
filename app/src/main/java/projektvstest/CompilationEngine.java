@@ -1,8 +1,8 @@
 package projektvstest;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 
 public class CompilationEngine{
@@ -11,7 +11,7 @@ public class CompilationEngine{
     JasminWriter jasWriter;
     SymbolTable table;
     List<String> unaryOP = List.of("-","~");
-    List<String> os = List.of("String","Output");
+    List<String> os = List.of("Math","Memory","Screen","Output","Keyboard","String","Sys");
 
     String currentLine;
     String className;
@@ -98,6 +98,11 @@ public class CompilationEngine{
             kind = removeExtraS(currentLine);
             process(currentLine); //static|field
             type = removeExtraS(currentLine);
+
+            //Für Types aus OS
+            if(os.stream().anyMatch(type::contains)){
+                type = "OS/" + type;
+            }
             process(currentLine); //type
             name = removeExtraS(currentLine);
             process("identifier");//varName
@@ -160,6 +165,11 @@ public class CompilationEngine{
         String name;
         if(!currentLine.contains(")")){
             type = removeExtraS(currentLine);
+
+            //Für Types aus OS
+            if(os.stream().anyMatch(type::contains)){
+                type = "OS/" + type;
+            }
             process(currentLine); //type
             name = removeExtraS(currentLine);
             process("identifier");//varName
@@ -169,6 +179,11 @@ public class CompilationEngine{
         while(!currentLine.contains(")")){
             process(",");
             type = removeExtraS(currentLine);
+
+            //Für Types aus OS
+            if(os.stream().anyMatch(type::contains)){
+                type = "OS/" + type;
+            }
             process(currentLine); //type
             name = removeExtraS(currentLine);
             process("identifier");//varName
@@ -183,6 +198,26 @@ public class CompilationEngine{
 
         compileVarDec();
         jasWriter.writeLimit(table.varCount());
+
+        //OS Funktionen in der main Funktionen aufrufen.
+        if(className.equals("Main") && subroutineName.equals("main")){
+            jasWriter.writeNew("OS/Output");
+            jasWriter.writeInvoke("constructor", "OS/Output", "<init>", new ArrayList<>(),"void");
+            jasWriter.writePop();
+            jasWriter.writeNew("OS/Screen");
+            jasWriter.writeInvoke("constructor", "OS/Screen", "<init>", new ArrayList<>(),"void");
+            jasWriter.writePop();
+            jasWriter.writeNew("OS/Memory");
+            jasWriter.writeInvoke("constructor", "OS/Memory", "<init>", new ArrayList<>(),"void");
+            jasWriter.writePop();
+            jasWriter.writeNew("OS/Math");
+            jasWriter.writeInvoke("constructor", "OS/Math", "<init>", new ArrayList<>(),"void");
+            jasWriter.writePop();
+            jasWriter.writeNew("OS/Keyboard");
+            jasWriter.writeInvoke("constructor", "OS/Keyboard", "<init>", new ArrayList<>(),"void");
+            jasWriter.writePop();
+        }
+
         if(subroutineFuncKind.equals("constructor")){
             jasWriter.writeLoad(0, "object");
             // dup ????
@@ -200,6 +235,10 @@ public class CompilationEngine{
         while(currentLine.contains("var")){
             process("var");
             type = removeExtraS(currentLine);
+            //Für Types aus OS
+            if(os.stream().anyMatch(type::contains)){
+                type = "OS/" + type;
+            }
             process(currentLine); //type
             name = removeExtraS(currentLine);
             process("identifier");//varName
@@ -241,7 +280,7 @@ public class CompilationEngine{
             getOutOfTable("this");
         }
 
-        //Ignoring for now
+        //Muss noch bearbeitet werden!!!!!!
         if(currentLine.contains("[")){
             process("[");
             compileExpression();
@@ -348,6 +387,10 @@ public class CompilationEngine{
             move();
             if(currentLine.contains(".")){ //subroutineCall
 
+                //Gilt nur für OS Klassen die statisch aufgerufen werden...
+                if(os.stream().anyMatch(lastLine::contains)){
+                    lastLine = "OS/" + lastLine;
+                }
 
                 process(".");
                 callingSubName = removeExtraS(currentLine);
@@ -361,10 +404,7 @@ public class CompilationEngine{
                     getOutOfTable(lastLine);
                 }else{
                     fullName = lastLine + "." + callingSubName;
-                    //Gilt nur für OS Klassen
-                    if(fullName.contains("Output")){
-                        jasWriter.getStatic(lastLine);
-                    }else if(cM.getMethodKind(fullName).equals("constructor")) {
+                    if(cM.getMethodKind(fullName).equals("constructor")) {
                         jasWriter.writeNew(lastLine);//Muss vor Expression aufgerufen werden.
                     }
                 }
@@ -374,8 +414,7 @@ public class CompilationEngine{
                 compileExpressionList();
                 process(")");
 
-                //Calling the Subroutine
-                if(os.stream().noneMatch(lastLine::contains)){
+                //Calling the Subroutin
                     String typeOfFullName = cM.getMethodType(fullName);
                     if(cM.getMethodKind(fullName).equals("constructor")){
                         //is a Constructor
@@ -389,18 +428,16 @@ public class CompilationEngine{
                     }
                     callingReturnType = typeOfFullName;
                     arithmeticType = callingReturnType;
-                }else{
-                    jasWriter.writeInvokeOS(lastLine , callingSubName);
-                    callingReturnType = "void";
-                }
 
             }else if(currentLine.contains("[")){
-                // writeLastLine(lastLine);
+                //Muss noch bearbeitet werden!!!!!!
+
+
+
                 process("[");
                 compileExpression();
                 process("]");
             }else if(currentLine.contains("(")){//calling a static function in the same Class
-                // writeLastLine(lastLine);
                 process("(");
                 compileExpressionList();
                 process(")");
@@ -409,34 +446,20 @@ public class CompilationEngine{
                 callingReturnType = cM.getMethodType(fullName);
                 arithmeticType = callingReturnType;
             }else{
-                System.out.println(lastLine);
                 getOutOfTable(lastLine);
                 arithmeticType = table.typeOf(lastLine);
             }
-        }else if(currentLine.contains("(")){ //(expression)
-            process("(");
-            compileExpression();
-            process(")");
-        }else if(unaryOP.stream().anyMatch(uo -> currentLine.contains(uo))){
-            String uOp = removeExtraS(currentLine);
-            process(currentLine);
-            compileTerm();
-            if(uOp.equals("-")){
-                uOp = "neg";
-            }
-            jasWriter.writeArithmetic(uOp,"int");
         }else if(currentLine.contains("stringConstant")){
-            String s = removeExtraS(currentLine);
-            jasWriter.writeLdc(removeExtraS(currentLine));
+            translateAndWriteString(currentLine);
             process(currentLine);
             arithmeticType = "Object";
         }else if(currentLine.contains("integerConstant")||currentLine.contains("keyword")){
             if(currentLine.contains("true")){
-                jasWriter.writeBiPush(1);
+                jasWriter.writeNumberPush(1);
                 process(currentLine);
                 arithmeticType = "int";
             }else if(currentLine.contains("false")){
-                jasWriter.writeBiPush(0);
+                jasWriter.writeNumberPush(0);
                 process(currentLine);
                 arithmeticType = "int";
             }else if(currentLine.contains("null")){
@@ -450,11 +473,22 @@ public class CompilationEngine{
                 process(currentLine);
                 arithmeticType = "Object";
             }else{
-                jasWriter.writeBiPush(Integer.parseInt(removeExtraS(currentLine)));
+                jasWriter.writeNumberPush(Integer.parseInt(removeExtraS(currentLine)));
                 process(currentLine);
                 arithmeticType = "int";
             }
-
+        }else if(currentLine.contains("(")){ //(expression)
+            process("(");
+            compileExpression();
+            process(")");
+        }else if(unaryOP.stream().anyMatch(uo -> currentLine.contains(uo))){
+            String uOp = removeExtraS(currentLine);
+            process(currentLine);
+            compileTerm();
+            if(uOp.equals("-")){
+                uOp = "neg";
+            }
+            jasWriter.writeArithmetic(uOp,"int");
         }
         //write("/term"); 
     }
@@ -521,6 +555,20 @@ public class CompilationEngine{
             jasWriter.writeStore(table.indexOf(vName), table.typeOf(vName));
         }else if(table.existInClassT(vName)){
             jasWriter.writePut(table.kindOf(vName), className, vName, table.typeOf(vName));
+        }
+    }
+
+    public void translateAndWriteString(String cline){
+        String line = removeExtraS(cline).trim() + " ";
+        jasWriter.writeNew("OS/String");
+        jasWriter.writeNumberPush(line.length());
+        jasWriter.writeInvoke("constructor", "OS/String", "<init>", List.of("int"),"void");
+        for(int i = 0; i < line.length(); i++){
+            int ascii = (int) line.charAt(i);
+            jasWriter.writeNumberPush( ascii);
+            jasWriter.writeInvoke("method","OS/String", "appendChar", List.of("char"),"OS/String");
+            //muss zu OS/
+            //jasWriter.writeCall("String.appendChar", 2);
         }
     }
 

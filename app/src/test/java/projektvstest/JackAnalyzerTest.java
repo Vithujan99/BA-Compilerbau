@@ -68,7 +68,7 @@ public class JackAnalyzerTest {
     String generatedJasminContent = Files.readString(generatedJasminFilePath);
 
     assert(generatedJasminContent.contains("""
-            bipush 5
+            iconst_5
             istore 1
             """));
   }

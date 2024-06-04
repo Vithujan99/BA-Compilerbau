@@ -1,4 +1,4 @@
 .field x I
 .field static d I
-.field s Ljava/lang/String;
+.field s LOS/String;
 .field b Z

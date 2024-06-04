@@ -3,10 +3,25 @@
 .method public static main([Ljava/lang/String;)V
 .limit stack 10
 .limit locals 2
-bipush 5
+new OS/Output
+dup
+invokespecial OS/Output.<init>()V
+pop
+new OS/Screen
+dup
+invokespecial OS/Screen.<init>()V
+pop
+new OS/Memory
+dup
+invokespecial OS/Memory.<init>()V
+pop
+new OS/Math
+dup
+invokespecial OS/Math.<init>()V
+pop
+iconst_5
 istore 1
-getstatic java/lang/System.out Ljava/io/PrintStream;
 iload 1
-invokevirtual java/io/PrintStream.print(I)V
+invokestatic OS/Output.printInt(I)V
 return
 .end method
