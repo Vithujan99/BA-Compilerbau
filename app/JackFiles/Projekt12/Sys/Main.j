@@ -3,25 +3,9 @@
 .method public static main([Ljava/lang/String;)V
 .limit stack 10
 .limit locals 2
-new OS/Output
+new OS/Sys
 dup
-invokespecial OS/Output.<init>()V
-pop
-new OS/Screen
-dup
-invokespecial OS/Screen.<init>()V
-pop
-new OS/Memory
-dup
-invokespecial OS/Memory.<init>()V
-pop
-new OS/Math
-dup
-invokespecial OS/Math.<init>()V
-pop
-new OS/Keyboard
-dup
-invokespecial OS/Keyboard.<init>()V
+invokespecial OS/Sys.<init>()V
 pop
 iconst_0
 istore 1

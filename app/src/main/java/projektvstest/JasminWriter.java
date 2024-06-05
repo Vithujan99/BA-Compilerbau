@@ -35,7 +35,7 @@ public class JasminWriter {
             case "boolean" -> "Z";
             case "char" -> "C";
             case "void" -> "V";
-            case "Array" -> "[Ljava/lang/Integer";
+            case "Array" -> "[I";
             default -> "L" + type + ";";
         };
     }
@@ -79,13 +79,12 @@ public class JasminWriter {
         write("new "+ className + "\ndup");
     }
 
-    public void writeDup(){write("dup");}
-
-
+//Für die Erstellung eines Arrays anstatt im OS
+    public void writeNewArray(){
+        write("newarray int");
+    }
 //writepush unterteilt------------------------------------------
     //bipush nur für Integer
-    //noch eins für String ldc <Hallo World!>
-
     public void writeNumberPush(int number) {
         if(number == -1){
             write("iconst_m1");
@@ -104,9 +103,6 @@ public class JasminWriter {
         }
 
     }
-    public void writeLdc(String s){
-        write("ldc" + " \"" + s + "\"");
-    }
     public void writeAconst(String s){
         write("aconst_" + s);
     }
@@ -120,7 +116,6 @@ public class JasminWriter {
         write(out);
     }
     public void writeGet(String kind, String className, String varName, String type){
-        //t hier bestimmen oder lieber auserhalb und ausprobieren ob V und A stimmen
         String t = getJasminType(type);
         if(kind.equals("field")){
             writeLoad(0,"object");
@@ -129,16 +124,12 @@ public class JasminWriter {
         
         write(out);
     }
-
-    //Nur für System.out von Jack!!!
-    public void getStatic(String lastLine) {
-        //Funktioniert das mit da oben?? NEIN? Weil OS Output. benutzt wird
-        if(lastLine.equals("Output")){
-            write("getstatic java/lang/System.out Ljava/io/PrintStream;");
-        }
+        //nur für array
+    public void writeLoadArray(){
+        write("iaload");
     }
 
-//writepop unterteilt----------------------------------------
+//writepop von Jack unterteilt----------------------------------------
     public void writePop(){
         write("pop");
     }
@@ -158,8 +149,11 @@ public class JasminWriter {
         
         write(out);
     }
-
-    //Jacks call Function;
+        //nur für array
+    public void writeStoreArray(){
+        write("iastore");
+    }
+//Jacks call Function--------------------------------------
     // Für parameterType wird kein getJasminType aufgerufen weil es im Compilation Engine aufgerufen wird.
     public void writeInvoke(String subroutineKind, String className, String subroutineName, List<String> parameterType, String returnType){
         StringBuilder pT = new StringBuilder();

@@ -11,7 +11,7 @@ public class CompilationEngine{
     JasminWriter jasWriter;
     SymbolTable table;
     List<String> unaryOP = List.of("-","~");
-    List<String> os = List.of("Math","Memory","Screen","Output","Keyboard","String","Sys");
+    List<String> os = List.of("Math","Memory","Screen","Output","Keyboard","String","Array","Sys");
 
     String currentLine;
     String className;
@@ -201,20 +201,8 @@ public class CompilationEngine{
 
         //OS Funktionen in der main Funktionen aufrufen.
         if(className.equals("Main") && subroutineName.equals("main")){
-            jasWriter.writeNew("OS/Output");
-            jasWriter.writeInvoke("constructor", "OS/Output", "<init>", new ArrayList<>(),"void");
-            jasWriter.writePop();
-            jasWriter.writeNew("OS/Screen");
-            jasWriter.writeInvoke("constructor", "OS/Screen", "<init>", new ArrayList<>(),"void");
-            jasWriter.writePop();
-            jasWriter.writeNew("OS/Memory");
-            jasWriter.writeInvoke("constructor", "OS/Memory", "<init>", new ArrayList<>(),"void");
-            jasWriter.writePop();
-            jasWriter.writeNew("OS/Math");
-            jasWriter.writeInvoke("constructor", "OS/Math", "<init>", new ArrayList<>(),"void");
-            jasWriter.writePop();
-            jasWriter.writeNew("OS/Keyboard");
-            jasWriter.writeInvoke("constructor", "OS/Keyboard", "<init>", new ArrayList<>(),"void");
+            jasWriter.writeNew("OS/Sys");
+            jasWriter.writeInvoke("constructor", "OS/Sys", "<init>", new ArrayList<>(),"void");
             jasWriter.writePop();
         }
 
@@ -271,26 +259,33 @@ public class CompilationEngine{
     }
 
     public void compileLet(){
+        boolean isArray = false;
         increaseTab();
         process("let");
         String varName = removeExtraS(currentLine);
         process("identifier");//varName
-
         if(table.kindOf(varName).equals("field")){
             getOutOfTable("this");
         }
-
-        //Muss noch bearbeitet werden!!!!!!
+        //Array Muss noch bearbeitet werden!!!!!!
         if(currentLine.contains("[")){
+            isArray = true;
+            getOutOfTable(varName); //load array reference
             process("[");
-            compileExpression();
+            compileExpression();//index
             process("]");
         } //expression
         process("=");
-        compileExpression();
+        compileExpression();//Value
         process(";");
-
-        putOutOfTable(varName);
+        if(table.typeOf(varName).equals("OS/Array") && !isArray && arithmeticType.equals("int")){
+            jasWriter.writeInvoke("function","OS/Array","setBaseAddress",List.of("int"),"OS/Array");
+        }
+        if(isArray){
+            jasWriter.writeInvoke("method","OS/Array","set",List.of("int","int"),"void"); //store value at specified index in the array
+        } else{
+            putOutOfTable(varName);
+        }
         decreaseTab();
     }
 
@@ -430,13 +425,11 @@ public class CompilationEngine{
                     arithmeticType = callingReturnType;
 
             }else if(currentLine.contains("[")){
-                //Muss noch bearbeitet werden!!!!!!
-
-
-
+                getOutOfTable(lastLine);
                 process("[");
                 compileExpression();
                 process("]");
+                jasWriter.writeInvoke("method","OS/Array","get",List.of("int"),"int");
             }else if(currentLine.contains("(")){//calling a static function in the same Class
                 process("(");
                 compileExpressionList();
@@ -528,15 +521,6 @@ public class CompilationEngine{
         } 
         decreaseTab();
     }
-
-    // public void writeLastLine(String str){
-    //     try{
-    //         writeFile.write(tab + str +"\n");
-    //     }catch (IOException e) {
-    //         System.out.println("An error occurred.");
-    //         e.printStackTrace();
-    //     }
-    // }
 
     public void fileClose(){
         jasWriter.fileClose();

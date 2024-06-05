@@ -1,0 +1,11 @@
+class Main {
+
+    /** Performs several Array manipulations. */
+    function void main() {
+        var Array a;
+        let a = Array.new(3);
+        let a[2] = 222;
+        do Output.printInt(a[2]);
+        return;
+    }
+}
