@@ -208,8 +208,24 @@ public class CompilationEngine{
 
         if(subroutineFuncKind.equals("constructor")){
             jasWriter.writeLoad(0, "object");
-            // dup ????
             jasWriter.writeInvoke("constructor","java/lang/Object","<init>",null,"void");
+            // Klassen Feld Variablen mit 0 initialisieren
+            for(ClassSymbol s : table.classTable){
+                if(s.type.equals("char")){
+                    if(s.kind.equals("field")){
+                        getOutOfTable("this");
+                    }
+                    jasWriter.writeNumberPush(0);
+                    putOutOfTable(s.name);
+                }
+            }
+        }
+        //Subroutine Variablen mit 0 initialisieren
+        for(SubSymbol s : table.subTable){
+            if(s.type.equals("char")){
+                jasWriter.writeNumberPush(0);
+                putOutOfTable(s.name);
+            }
         }
         compileStatements();
 
@@ -410,7 +426,7 @@ public class CompilationEngine{
                 process(")");
 
                 //Calling the Subroutin
-                    String typeOfFullName = cM.getMethodType(fullName);
+                String typeOfFullName = cM.getMethodType(fullName);
                     if(cM.getMethodKind(fullName).equals("constructor")){
                         //is a Constructor
                         jasWriter.writeInvoke("constructor", lastLine, "<init>", cM.getMethodParamTypes(fullName),typeOfFullName);
@@ -430,12 +446,21 @@ public class CompilationEngine{
                 compileExpression();
                 process("]");
                 jasWriter.writeInvoke("method","OS/Array","get",List.of("int"),"int");
-            }else if(currentLine.contains("(")){//calling a static function in the same Class
+            }else if(currentLine.contains("(")){//calling a static function or a method in the same Class
+                String fullName = className + "." + lastLine;
+                if(cM.getMethodKind(fullName).equals("method")){
+                    getOutOfTable("this");
+                }
                 process("(");
                 compileExpressionList();
                 process(")");
-                String fullName = className + "." + lastLine;
-                jasWriter.writeInvoke("function",className, lastLine, cM.getMethodParamTypes(fullName),cM.getMethodType(fullName));
+                if(cM.getMethodKind(fullName).equals("method")){
+                    //is a Method
+                    jasWriter.writeInvoke("method",className, lastLine, cM.getMethodParamTypes(fullName),cM.getMethodType(fullName));
+                }else{
+                    //is a function
+                    jasWriter.writeInvoke("function",className, lastLine, cM.getMethodParamTypes(fullName),cM.getMethodType(fullName));
+                }
                 callingReturnType = cM.getMethodType(fullName);
                 arithmeticType = callingReturnType;
             }else{

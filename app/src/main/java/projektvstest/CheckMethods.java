@@ -32,7 +32,7 @@ public class CheckMethods {
     methods.add(new CallingSubSymbol(className + ".peek", "int", "function", List.of("int")));
     methods.add(new CallingSubSymbol(className + ".poke", "void", "function", List.of("int","int")));
     methods.add(new CallingSubSymbol(className + ".alloc", "int", "function", List.of("int")));
-    methods.add(new CallingSubSymbol(className + ".deAlloc", "int", "function", List.of("Array")));
+    methods.add(new CallingSubSymbol(className + ".deAlloc", "void", "function", List.of("java/lang/Object")));
     //Für Screen
     className = "OS/Screen";
     methods.add(new CallingSubSymbol(className + ".new", "void", "constructor", List.of()));

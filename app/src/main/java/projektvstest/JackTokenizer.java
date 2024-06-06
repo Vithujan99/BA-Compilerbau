@@ -44,6 +44,7 @@ public class JackTokenizer{
                 return;
             }
             currentLine = currentLine.split("//")[0];
+            currentLine = currentLine.replace("\t"," ");
             if(currentLine.length() >= 1){
                 currentWords = tokenizeLine(currentLine);
             }

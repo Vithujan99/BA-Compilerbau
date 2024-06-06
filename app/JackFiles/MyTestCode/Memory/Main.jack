@@ -1,0 +1,9 @@
+class Main {
+    function void main() {
+        var int temp, err;
+        var Array a, b, c;
+		if (b = a) {					  // Fail compare if b = a
+			let err = 1; }
+        return;
+    }
+}
