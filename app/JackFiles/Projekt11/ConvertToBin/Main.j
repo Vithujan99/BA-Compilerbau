@@ -7,6 +7,9 @@ new OS/Sys
 dup
 invokespecial OS/Sys.<init>()V
 pop
+sipush 8000
+sipush 7515
+invokestatic OS/Memory.poke(II)V
 sipush 8001
 bipush 16
 iconst_1
@@ -17,11 +20,27 @@ invokestatic OS/Memory.peek(I)I
 istore 1
 iload 1
 invokestatic Main.convert(I)V
+sipush 8001
+invokestatic OS/Memory.peek(I)I
+invokestatic OS/Output.printInt(I)V
+sipush 8002
+invokestatic OS/Memory.peek(I)I
+invokestatic OS/Output.printInt(I)V
+sipush 8003
+invokestatic OS/Memory.peek(I)I
+invokestatic OS/Output.printInt(I)V
+sipush 8004
+invokestatic OS/Memory.peek(I)I
+invokestatic OS/Output.printInt(I)V
 return
 .end method
 .method public static convert(I)V
 .limit stack 10
 .limit locals 4
+iconst_0
+istore 1
+iconst_0
+istore 2
 iconst_1
 istore 3
 whileL1:

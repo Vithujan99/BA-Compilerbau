@@ -35,7 +35,6 @@ public class JasminWriter {
             case "boolean" -> "Z";
             case "char" -> "C";
             case "void" -> "V";
-            case "Array" -> "[I";
             default -> "L" + type + ";";
         };
     }
@@ -259,7 +258,7 @@ public class JasminWriter {
     }
 
     public void writeIf(String label, int counter){
-        out = "ifeq " + label + counter;
+        out = "ifeq " + label + counter; //ifeq succeeds if and only if value = 0
         write(out);
     }
 

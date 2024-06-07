@@ -72,6 +72,8 @@ invokevirtual OS/Array.set(II)V
 aload 3
 iconst_0
 aconst_null
+pop
+iconst_0
 invokevirtual OS/Array.set(II)V
 aload 3
 iconst_0
@@ -364,6 +366,7 @@ bipush 32
 invokevirtual OS/String.appendChar(C)LOS/String;
 invokestatic OS/Output.printString(LOS/String;)V
 aload 3
+invokevirtual OS/Array.getBaseAddress()I
 invokestatic OS/Output.printInt(I)V
 invokestatic OS/Output.println()V
 aconst_null
@@ -379,7 +382,7 @@ jump1:
 ifeq ifL0
 aload 1
 bipush 10
-invokestatic Main.fill([II)V
+invokestatic Main.fill(LOS/Array;I)V
 aload 1
 iconst_3
 invokevirtual OS/Array.get(I)I
@@ -647,6 +650,7 @@ new OS/Array
 dup
 iconst_3
 invokespecial OS/Array.<init>(I)V
+invokevirtual OS/Array.getBaseAddress()I
 invokevirtual OS/Array.set(II)V
 goto whileL3
 whileL2:

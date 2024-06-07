@@ -26,9 +26,14 @@ class Main {
      */
     function void main() {
 	    var int value;
+	    do Memory.poke(8000, 7515);
         do Main.fillMemory(8001, 16, -1); // sets RAM[8001]..RAM[8016] to -1
         let value = Memory.peek(8000);    // reads a value from RAM[8000]
         do Main.convert(value);           // performs the conversion
+        do Output.printInt(Memory.peek(8001));
+        do Output.printInt(Memory.peek(8002));
+        do Output.printInt(Memory.peek(8003));
+        do Output.printInt(Memory.peek(8004));
         return;
     }
     
@@ -37,6 +42,8 @@ class Main {
     function void convert(int value) {
     	var int mask, position;
     	var boolean loop;
+    	let mask = 0;
+    	let position = 0;
     	
     	let loop = true;
     	while (loop) {

@@ -9,6 +9,7 @@ public class CheckMethods {
   List<CallingSubSymbol> methods;
   Scanner readFile;
   String currentLine;
+  final List<String> os = List.of("Math","Memory","Screen","Output","Keyboard","String","Array","Sys");
 
   public CheckMethods(){
     methods = new ArrayList<>();
@@ -79,6 +80,7 @@ public class CheckMethods {
     methods.add(new CallingSubSymbol(className + ".setBaseAddress", "OS/Array", "function", List.of("int")));
     methods.add(new CallingSubSymbol(className + ".get", "int", "method", List.of("int")));
     methods.add(new CallingSubSymbol(className + ".set", "void", "method", List.of("int","int")));
+    methods.add(new CallingSubSymbol(className + ".getBaseAddress", "int", "method", List.of()));
     methods.add(new CallingSubSymbol(className + ".dispose", "void", "method", List.of()));
     //Für Sys
     className = "OS/Sys";
@@ -118,20 +120,34 @@ public class CheckMethods {
         kind = removeExtraS(currentLine);
         move();
         type = kind.equals("constructor") ? "void" :removeExtraS(currentLine);
+        //Gilt nur für Types aus dem OS
+        if(os.stream().anyMatch(type::contains)){
+          type = "OS/" + type;
+        }
+
         move();
         subName = removeExtraS(currentLine);
         fullSubName = className + "." + subName;
         move();
         List<String> paramTypes = new ArrayList<>();
         process("(");
+        String paramType;
         if (!currentLine.contains(")")){
-          paramTypes.add(removeExtraS(currentLine));
+          paramType = removeExtraS(currentLine);
+          if(os.stream().anyMatch(paramType::contains)){
+            paramType = "OS/" + paramType;
+          }
+          paramTypes.add(paramType);
           process(currentLine);
           process("identifier");
         }
         while(!currentLine.contains(")")){
           process(",");
-          paramTypes.add(removeExtraS(currentLine));
+          paramType = removeExtraS(currentLine);
+          if(os.stream().anyMatch(paramType::contains)){
+            paramType = "OS/" + paramType;
+          }
+          paramTypes.add(paramType);
           process(currentLine);
           process("identifier");
         }

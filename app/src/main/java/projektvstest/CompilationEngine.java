@@ -11,7 +11,7 @@ public class CompilationEngine{
     JasminWriter jasWriter;
     SymbolTable table;
     List<String> unaryOP = List.of("-","~");
-    List<String> os = List.of("Math","Memory","Screen","Output","Keyboard","String","Array","Sys");
+    final List<String> os = List.of("Math","Memory","Screen","Output","Keyboard","String","Array","Sys");
 
     String currentLine;
     String className;
@@ -297,7 +297,15 @@ public class CompilationEngine{
         if(table.typeOf(varName).equals("OS/Array") && !isArray && arithmeticType.equals("int")){
             jasWriter.writeInvoke("function","OS/Array","setBaseAddress",List.of("int"),"OS/Array");
         }
+
         if(isArray){
+            if(table.typeOf(varName).equals("OS/Array") && arithmeticType.equals("OS/Array")){
+                jasWriter.writeInvoke("method","OS/Array","getBaseAddress",List.of(),"int");
+            }
+            if(table.typeOf(varName).equals("OS/Array") && arithmeticType.equals("null")){
+                jasWriter.writePop();
+                jasWriter.writeNumberPush(0);
+            }
             jasWriter.writeInvoke("method","OS/Array","set",List.of("int","int"),"void"); //store value at specified index in the array
         } else{
             putOutOfTable(varName);
@@ -398,7 +406,7 @@ public class CompilationEngine{
             move();
             if(currentLine.contains(".")){ //subroutineCall
 
-                //Gilt nur für OS Klassen die statisch aufgerufen werden...
+                //Gilt nur für OS Klassen
                 if(os.stream().anyMatch(lastLine::contains)){
                     lastLine = "OS/" + lastLine;
                 }
@@ -435,17 +443,29 @@ public class CompilationEngine{
                         jasWriter.writeInvoke("method",table.typeOf(lastLine), callingSubName, cM.getMethodParamTypes(fullName),typeOfFullName);
                     }else{
                         //is a function
+                        if(fullName.equals("OS/Output.printInt")){
+                            if(arithmeticType.equals("OS/Array")){
+                                jasWriter.writeInvoke("method","OS/Array","getBaseAddress",List.of(),"int");
+                            }
+                        }
                         jasWriter.writeInvoke("function",lastLine, callingSubName, cM.getMethodParamTypes(fullName),typeOfFullName);
                     }
                     callingReturnType = typeOfFullName;
                     arithmeticType = callingReturnType;
+                    if(fullName.contains("OS/Array")){
+                        arithmeticType = "OS/Array";
+                    }
 
             }else if(currentLine.contains("[")){
+                if(table.kindOf(lastLine).equals("field")){//When the array is a field Variable
+                    getOutOfTable("this");
+                }
                 getOutOfTable(lastLine);
                 process("[");
                 compileExpression();
                 process("]");
                 jasWriter.writeInvoke("method","OS/Array","get",List.of("int"),"int");
+                arithmeticType = "int";
             }else if(currentLine.contains("(")){//calling a static function or a method in the same Class
                 String fullName = className + "." + lastLine;
                 if(cM.getMethodKind(fullName).equals("method")){
@@ -483,7 +503,7 @@ public class CompilationEngine{
             }else if(currentLine.contains("null")){
                 jasWriter.writeAconst("null");
                 process(currentLine);
-                arithmeticType = "Object";
+                arithmeticType = "null";
             }else if(currentLine.contains("this")){
                 if(!subroutineFuncKind.contains("constructor")){
                     getOutOfTable(removeExtraS(currentLine));
