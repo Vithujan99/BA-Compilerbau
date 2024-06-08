@@ -29,8 +29,8 @@ public class SymbolTable {
                 cS = new ClassSymbol(name, type, kind);
                 classTable.add(cS);
             }
-            case "var" -> {
-                sS = new SubSymbol(name, type, "var", varIndex++);
+            case "var", "parameter" -> {
+                sS = new SubSymbol(name, type, kind, varIndex++);
                 subTable.add(sS);
             }
             default -> {

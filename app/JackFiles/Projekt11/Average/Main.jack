@@ -16,7 +16,6 @@ class Main {
      let a = Array.new(length); // constructs the array
      
      let i = 0;
-     let sum = 0; //Nicht im Original Code!!!!!
      while (i < length) {
         let a[i] = Keyboard.readInt("Enter a number: ");
         let sum = sum + a[i];

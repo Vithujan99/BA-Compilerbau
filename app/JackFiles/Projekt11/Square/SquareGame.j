@@ -8,6 +8,9 @@
 aload 0
 invokespecial java/lang/Object.<init>()V
 aload 0
+iconst_0
+putfield SquareGame.direction I
+aload 0
 new Square
 dup
 iconst_0
@@ -106,6 +109,8 @@ return
 .limit locals 3
 iconst_0
 istore 1
+iconst_0
+istore 2
 iconst_0
 istore 2
 iconst_0

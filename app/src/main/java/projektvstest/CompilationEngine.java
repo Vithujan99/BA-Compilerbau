@@ -24,6 +24,7 @@ public class CompilationEngine{
     Integer labelCounter;
     String tab;
     String arithmeticType;
+    Boolean isReturn;
 
     public CompilationEngine(String input, String output, CheckMethods checkMethods){
         try{
@@ -39,6 +40,7 @@ public class CompilationEngine{
         labelCounter = 0;
         arithmeticType = "int";
         tab = "";
+        isReturn = false;
     }
 
     private void move(){
@@ -128,7 +130,7 @@ public class CompilationEngine{
             subroutineParameterTypes = "";
             subroutineFuncKind = removeExtraS(currentLine);
             if(subroutineFuncKind.equals("method")||subroutineFuncKind.equals("constructor")){
-                table.define("this", className, "var");
+                table.define("this", className, "parameter");
             }
             process(currentLine);
             subroutineReturnType = removeExtraS(currentLine);
@@ -149,12 +151,14 @@ public class CompilationEngine{
             //--------------Muss gändert werden nur so für Prototyp??
             if(subroutineName.equals("main")){
                 subroutineParameterTypes = "[Ljava/lang/String;";
-                table.define("args","String","var");
+                table.define("args","String","parameter");
             }
 
             jasWriter.writeFunction(subroutineFuncKind, subroutineName, subroutineParameterTypes, subroutineReturnType);
 
             compileSubroutineBody();
+
+
 
             jasWriter.writeEndSubroutine();
         }
@@ -174,7 +178,7 @@ public class CompilationEngine{
             name = removeExtraS(currentLine);
             process("identifier");//varName
             subroutineParameterTypes = "" + JasminWriter.getJasminType(type);
-            table.define(name,type,"var");
+            table.define(name,type,"parameter");
         }
         while(!currentLine.contains(")")){
             process(",");
@@ -188,7 +192,7 @@ public class CompilationEngine{
             name = removeExtraS(currentLine);
             process("identifier");//varName
             subroutineParameterTypes = subroutineParameterTypes + JasminWriter.getJasminType(type);
-            table.define(name,type,"var");
+            table.define(name,type,"parameter");
         }
     }
 
@@ -211,18 +215,18 @@ public class CompilationEngine{
             jasWriter.writeInvoke("constructor","java/lang/Object","<init>",null,"void");
             // Klassen Feld Variablen mit 0 initialisieren
             for(ClassSymbol s : table.classTable){
-                if(s.type.equals("char")){
+                if(s.type.equals("char")||s.type.equals("int")||s.type.equals("boolean")){
                     if(s.kind.equals("field")){
                         getOutOfTable("this");
+                        jasWriter.writeNumberPush(0);
+                        putOutOfTable(s.name);
                     }
-                    jasWriter.writeNumberPush(0);
-                    putOutOfTable(s.name);
                 }
             }
         }
-        //Subroutine Variablen mit 0 initialisieren
+        //Subroutine Variablen mit 0 initialisieren aber nicht die Parameter
         for(SubSymbol s : table.subTable){
-            if(s.type.equals("char")){
+            if((s.type.equals("char")||s.type.equals("int")||s.type.equals("boolean")) && s.kind.equals("var")){
                 jasWriter.writeNumberPush(0);
                 putOutOfTable(s.name);
             }
@@ -263,6 +267,7 @@ public class CompilationEngine{
         //write("statements");
         
         while(sment.stream().anyMatch(s->currentLine.contains(s))){
+            isReturn = false;
             if(currentLine.contains("let")) compileLet();
             if(currentLine.contains("if")) compileIf();
             if(currentLine.contains("while")) compileWhile();
@@ -325,7 +330,10 @@ public class CompilationEngine{
         process("{");
         compileStatements();
         process("}");
-        jasWriter.writeGoto("ifL",ifCounter+1);
+        //When last line in compileStatements is a return Statement, then no goto line
+        if(!isReturn){
+            jasWriter.writeGoto("ifL",ifCounter+1);
+        }
         jasWriter.writeLabel("ifL",ifCounter);
         if(currentLine.contains("else")){
             process("else");
@@ -333,7 +341,9 @@ public class CompilationEngine{
             compileStatements();
             process("}");
         }
-        jasWriter.writeLabel("ifL",ifCounter+1);
+        if(!isReturn){
+            jasWriter.writeLabel("ifL",ifCounter+1);
+        }
         decreaseTab();
     }
 
@@ -359,8 +369,7 @@ public class CompilationEngine{
     public void compileDo(){
        
         process("do");
-        
-        //subroutineCall();
+
         compileExpression();
 
         process(";");
@@ -373,6 +382,7 @@ public class CompilationEngine{
     }
 
     public void compileReturn(){
+        isReturn = true;
         process("return");
         //contains keyword --> NULL is a keyword
         if(currentLine.contains("identifier")||currentLine.contains("(")
@@ -404,7 +414,7 @@ public class CompilationEngine{
             String callingSubName;
             String lastLine = removeExtraS(currentLine);
             move();
-            if(currentLine.contains(".")){ //subroutineCall
+            if(currentLine.contains(".")){ //subroutineCall!!!
 
                 //Gilt nur für OS Klassen
                 if(os.stream().anyMatch(lastLine::contains)){
@@ -529,26 +539,6 @@ public class CompilationEngine{
             jasWriter.writeArithmetic(uOp,"int");
         }
         //write("/term"); 
-    }
-
-    public void subroutineCall(){
-        if(currentLine.contains("identifier")){
-            String lastLine = currentLine;
-            move();
-            if(currentLine.contains(".")){ //subroutineCall
-                // writeLastLine(lastLine);
-                process(".");
-                process("identifier");
-                process("(");
-                compileExpressionList();
-                process(")");
-            }else if(currentLine.contains("(")){//subroutineCall
-                // writeLastLine(lastLine);
-                process("(");
-                compileExpressionList();
-                process(")");
-            }
-        }
     }
 
     public void compileExpressionList(){

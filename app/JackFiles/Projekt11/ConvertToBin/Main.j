@@ -7,6 +7,8 @@ new OS/Sys
 dup
 invokespecial OS/Sys.<init>()V
 pop
+iconst_0
+istore 1
 sipush 8000
 sipush 7515
 invokestatic OS/Memory.poke(II)V
@@ -32,6 +34,42 @@ invokestatic OS/Output.printInt(I)V
 sipush 8004
 invokestatic OS/Memory.peek(I)I
 invokestatic OS/Output.printInt(I)V
+sipush 8005
+invokestatic OS/Memory.peek(I)I
+invokestatic OS/Output.printInt(I)V
+sipush 8006
+invokestatic OS/Memory.peek(I)I
+invokestatic OS/Output.printInt(I)V
+sipush 8007
+invokestatic OS/Memory.peek(I)I
+invokestatic OS/Output.printInt(I)V
+sipush 8008
+invokestatic OS/Memory.peek(I)I
+invokestatic OS/Output.printInt(I)V
+sipush 8009
+invokestatic OS/Memory.peek(I)I
+invokestatic OS/Output.printInt(I)V
+sipush 8010
+invokestatic OS/Memory.peek(I)I
+invokestatic OS/Output.printInt(I)V
+sipush 8011
+invokestatic OS/Memory.peek(I)I
+invokestatic OS/Output.printInt(I)V
+sipush 8012
+invokestatic OS/Memory.peek(I)I
+invokestatic OS/Output.printInt(I)V
+sipush 8013
+invokestatic OS/Memory.peek(I)I
+invokestatic OS/Output.printInt(I)V
+sipush 8014
+invokestatic OS/Memory.peek(I)I
+invokestatic OS/Output.printInt(I)V
+sipush 8015
+invokestatic OS/Memory.peek(I)I
+invokestatic OS/Output.printInt(I)V
+sipush 8016
+invokestatic OS/Memory.peek(I)I
+invokestatic OS/Output.printInt(I)V
 return
 .end method
 .method public static convert(I)V
@@ -41,6 +79,8 @@ iconst_0
 istore 1
 iconst_0
 istore 2
+iconst_0
+istore 3
 iconst_1
 istore 3
 whileL1:
@@ -121,13 +161,11 @@ jump9:
 ifeq ifL6
 iconst_1
 ireturn
-goto ifL7
 ifL6:
 iload 0
 iconst_2
 imul
 ireturn
-ifL7:
 .end method
 .method public static fillMemory(III)V
 .limit stack 10

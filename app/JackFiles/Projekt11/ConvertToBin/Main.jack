@@ -34,6 +34,18 @@ class Main {
         do Output.printInt(Memory.peek(8002));
         do Output.printInt(Memory.peek(8003));
         do Output.printInt(Memory.peek(8004));
+        do Output.printInt(Memory.peek(8005));
+        do Output.printInt(Memory.peek(8006));
+        do Output.printInt(Memory.peek(8007));
+        do Output.printInt(Memory.peek(8008));
+        do Output.printInt(Memory.peek(8009));
+        do Output.printInt(Memory.peek(8010));
+        do Output.printInt(Memory.peek(8011));
+        do Output.printInt(Memory.peek(8012));
+        do Output.printInt(Memory.peek(8013));
+        do Output.printInt(Memory.peek(8014));
+        do Output.printInt(Memory.peek(8015));
+        do Output.printInt(Memory.peek(8016));
         return;
     }
     
@@ -42,8 +54,6 @@ class Main {
     function void convert(int value) {
     	var int mask, position;
     	var boolean loop;
-    	let mask = 0;
-    	let position = 0;
     	
     	let loop = true;
     	while (loop) {

@@ -7,6 +7,8 @@ new OS/Sys
 dup
 invokespecial OS/Sys.<init>()V
 pop
+iconst_0
+istore 1
 invokestatic Main.test()Z
 istore 1
 iload 1

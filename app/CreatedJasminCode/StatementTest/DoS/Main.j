@@ -7,6 +7,9 @@
 aload 0
 invokespecial java/lang/Object.<init>()V
 aload 0
+iconst_0
+putfield Main.x I
+aload 0
 iconst_5
 putfield Main.x I
 return

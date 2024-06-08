@@ -13,6 +13,21 @@
 .limit locals 1
 aload 0
 invokespecial java/lang/Object.<init>()V
+aload 0
+iconst_0
+putfield PongGame.wall I
+aload 0
+iconst_0
+putfield PongGame.exit Z
+aload 0
+iconst_0
+putfield PongGame.score I
+aload 0
+iconst_0
+putfield PongGame.lastWall I
+aload 0
+iconst_0
+putfield PongGame.batWidth I
 invokestatic OS/Screen.clearScreen()V
 aload 0
 bipush 50
@@ -285,6 +300,16 @@ return
 .method public moveBall()V
 .limit stack 10
 .limit locals 6
+iconst_0
+istore 1
+iconst_0
+istore 2
+iconst_0
+istore 3
+iconst_0
+istore 4
+iconst_0
+istore 5
 aload 0
 aload 0
 getfield PongGame.ball LBall;

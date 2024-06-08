@@ -9,6 +9,15 @@
 aload 0
 invokespecial java/lang/Object.<init>()V
 aload 0
+iconst_0
+putfield Square.x I
+aload 0
+iconst_0
+putfield Square.y I
+aload 0
+iconst_0
+putfield Square.size I
+aload 0
 iload 1
 putfield Square.x I
 aload 0

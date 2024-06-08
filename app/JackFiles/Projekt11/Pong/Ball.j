@@ -21,6 +21,51 @@
 aload 0
 invokespecial java/lang/Object.<init>()V
 aload 0
+iconst_0
+putfield Ball.x I
+aload 0
+iconst_0
+putfield Ball.y I
+aload 0
+iconst_0
+putfield Ball.lengthx I
+aload 0
+iconst_0
+putfield Ball.lengthy I
+aload 0
+iconst_0
+putfield Ball.d I
+aload 0
+iconst_0
+putfield Ball.straightD I
+aload 0
+iconst_0
+putfield Ball.diagonalD I
+aload 0
+iconst_0
+putfield Ball.invert Z
+aload 0
+iconst_0
+putfield Ball.positivex Z
+aload 0
+iconst_0
+putfield Ball.positivey Z
+aload 0
+iconst_0
+putfield Ball.leftWall I
+aload 0
+iconst_0
+putfield Ball.rightWall I
+aload 0
+iconst_0
+putfield Ball.topWall I
+aload 0
+iconst_0
+putfield Ball.bottomWall I
+aload 0
+iconst_0
+putfield Ball.wall I
+aload 0
 iload 1
 putfield Ball.x I
 aload 0
@@ -111,6 +156,12 @@ ireturn
 .method public setDestination(II)V
 .limit stack 10
 .limit locals 6
+iconst_0
+istore 3
+iconst_0
+istore 4
+iconst_0
+istore 5
 aload 0
 iload 1
 aload 0
@@ -451,6 +502,16 @@ ireturn
 .method public bounce(I)V
 .limit stack 10
 .limit locals 7
+iconst_0
+istore 2
+iconst_0
+istore 3
+iconst_0
+istore 4
+iconst_0
+istore 5
+iconst_0
+istore 6
 aload 0
 getfield Ball.lengthx I
 bipush 10

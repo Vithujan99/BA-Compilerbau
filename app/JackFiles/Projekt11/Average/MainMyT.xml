@@ -47,11 +47,6 @@
 <symbol> = </symbol>
 <integerConstant> 0 </integerConstant>
 <symbol> ; </symbol>
-<keyword> let </keyword>
-<identifier> sum </identifier>
-<symbol> = </symbol>
-<integerConstant> 0 </integerConstant>
-<symbol> ; </symbol>
 <keyword> while </keyword>
 <symbol> ( </symbol>
 <identifier> i </identifier>

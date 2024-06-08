@@ -8,6 +8,10 @@
     dup
     invokespecial OS/Sys.<init>()V
     pop
+    iconst_0
+    istore 1
+    iconst_0
+    istore 2
     iconst_1
      istore 1
      iconst_1

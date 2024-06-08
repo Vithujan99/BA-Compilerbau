@@ -9,6 +9,8 @@ invokespecial OS/Sys.<init>()V
 pop
 iconst_0
 istore 1
+iconst_0
+istore 1
 whileL1:
 iload 1
 bipush 10

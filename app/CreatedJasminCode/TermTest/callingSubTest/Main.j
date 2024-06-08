@@ -7,6 +7,9 @@
 aload 0
 invokespecial java/lang/Object.<init>()V
 aload 0
+iconst_0
+putfield Main.x I
+aload 0
 iconst_5
 putfield Main.x I
 return
@@ -18,6 +21,8 @@ new OS/Sys
 dup
 invokespecial OS/Sys.<init>()V
 pop
+iconst_0
+istore 1
 new Main
 dup
 invokespecial Main.<init>()V

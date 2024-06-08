@@ -11,6 +11,21 @@
 aload 0
 invokespecial java/lang/Object.<init>()V
 aload 0
+iconst_0
+putfield Bat.x I
+aload 0
+iconst_0
+putfield Bat.y I
+aload 0
+iconst_0
+putfield Bat.width I
+aload 0
+iconst_0
+putfield Bat.height I
+aload 0
+iconst_0
+putfield Bat.direction I
+aload 0
 iload 1
 putfield Bat.x I
 aload 0

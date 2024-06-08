@@ -13,6 +13,8 @@ new OS/Sys
 dup
 invokespecial OS/Sys.<init>()V
 pop
+iconst_0
+istore 1
 .end method
 .method public add(ILOS/String;I)I
 .limit stack 10
@@ -21,4 +23,6 @@ pop
 .method public static sadd(I)I
 .limit stack 10
 .limit locals 2
+iconst_0
+istore 1
 .end method

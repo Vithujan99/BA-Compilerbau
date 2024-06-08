@@ -7,6 +7,12 @@ new OS/Sys
 dup
 invokespecial OS/Sys.<init>()V
 pop
+iconst_0
+istore 2
+iconst_0
+istore 3
+iconst_0
+istore 4
 new OS/String
 dup
 bipush 18
@@ -56,8 +62,6 @@ invokespecial OS/Array.<init>(I)V
 astore 1
 iconst_0
 istore 3
-iconst_0
-istore 4
 whileL1:
 iload 3
 iload 2
