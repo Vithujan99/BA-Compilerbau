@@ -16,6 +16,7 @@ enum KWord{
     IF,
     ELSE,
     WHILE,
+    FOR,
     RETURN,
     TRUE,
     FALSE,

@@ -263,7 +263,7 @@ public class CompilationEngine{
     }
 
     public void compileStatements(){
-        List<String> sment = List.of("let","if","while","do","return");
+        List<String> sment = List.of("let","if","while","for","do","return");
         //write("statements");
         
         while(sment.stream().anyMatch(s->currentLine.contains(s))){
@@ -271,6 +271,7 @@ public class CompilationEngine{
             if(currentLine.contains("let")) compileLet();
             if(currentLine.contains("if")) compileIf();
             if(currentLine.contains("while")) compileWhile();
+            if(currentLine.contains("for")) compileFor();
             if(currentLine.contains("do")) compileDo();
             if(currentLine.contains("return")) compileReturn();
         }
@@ -363,7 +364,31 @@ public class CompilationEngine{
         jasWriter.writeGoto("whileL",whileCounter + 1);
         jasWriter.writeLabel("whileL", whileCounter);
         decreaseTab();
+    }
 
+    public void compileFor(){
+        Integer forCounter = labelCounter;
+        labelCounter += 4;
+        //for (letStatement; expression; letStatement)
+        process("for");
+        process("(");
+        compileLet();
+        jasWriter.writeLabel("forL", forCounter);
+        compileExpression();
+        process(";");
+        jasWriter.writeIf("forL", forCounter + 3);
+        jasWriter.writeGoto("forL", forCounter + 1);
+        jasWriter.writeLabel("forL", forCounter + 2);
+        compileLet();
+        process(")");
+        jasWriter.writeGoto("forL", forCounter);
+
+        jasWriter.writeLabel("forL", forCounter + 1);
+        process("{");
+        compileStatements();
+        process("}");
+        jasWriter.writeGoto("forL", forCounter + 2);
+        jasWriter.writeLabel("forL", forCounter + 3);
     }
 
     public void compileDo(){
