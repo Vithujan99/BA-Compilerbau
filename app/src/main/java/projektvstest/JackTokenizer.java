@@ -102,9 +102,16 @@ public class JackTokenizer{
     }
 
     public boolean checkComment(){
+        boolean comment = false;
         while(currentLine.equals("")||currentLine.startsWith("//")
-        ||currentLine.startsWith("/**")||currentLine.startsWith("*/")
-        ||currentLine.endsWith("*/")||currentLine.startsWith("*")){
+        ||currentLine.startsWith("/**")||currentLine.startsWith("/*")
+        ||currentLine.endsWith("*/")||currentLine.startsWith("*")|| comment){
+            if(currentLine.startsWith("/*")){
+                comment = true;
+            }
+            if(currentLine.endsWith("*/")){
+                comment = false;
+            }
             if(!hasMoreTokens()){
                 return false;
             }

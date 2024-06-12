@@ -77,10 +77,6 @@ public class CheckMethods {
     //Für Array
     className = "OS/Array";
     methods.add(new CallingSubSymbol(className + ".new", "void", "constructor", List.of("int")));
-    methods.add(new CallingSubSymbol(className + ".setBaseAddress", "OS/Array", "function", List.of("int")));
-    methods.add(new CallingSubSymbol(className + ".get", "int", "method", List.of("int")));
-    methods.add(new CallingSubSymbol(className + ".set", "void", "method", List.of("int","int")));
-    methods.add(new CallingSubSymbol(className + ".getBaseAddress", "int", "method", List.of()));
     methods.add(new CallingSubSymbol(className + ".dispose", "void", "method", List.of()));
     //Für Sys
     className = "OS/Sys";

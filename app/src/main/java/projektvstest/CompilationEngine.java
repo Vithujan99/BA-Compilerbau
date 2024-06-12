@@ -62,6 +62,9 @@ public class CompilationEngine{
 
     private void process(String str){
         if(!currentLine.contains(str)){
+            System.out.println(className);
+            System.out.println(subroutineName);
+            System.out.println(str);
             System.out.println("Code is Wrong");
         }
         move();
@@ -286,7 +289,7 @@ public class CompilationEngine{
         process("let");
         String varName = removeExtraS(currentLine);
         process("identifier");//varName
-        if(table.kindOf(varName).equals("field")){
+        if(table.kindOf(varName).equals("field") && !currentLine.contains("[")){
             getOutOfTable("this");
         }
         //Array Muss noch bearbeitet werden!!!!!!
@@ -305,14 +308,18 @@ public class CompilationEngine{
         }
 
         if(isArray){
-            if(table.typeOf(varName).equals("OS/Array") && arithmeticType.equals("OS/Array")){
+            if(arithmeticType.equals("OS/String")){
+                jasWriter.writeInvoke("method","OS/Array","set",List.of("int","OS/String"),"void");
+            }else if(arithmeticType.equals("OS/Array")){
                 jasWriter.writeInvoke("method","OS/Array","getBaseAddress",List.of(),"int");
-            }
-            if(table.typeOf(varName).equals("OS/Array") && arithmeticType.equals("null")){
+                jasWriter.writeInvoke("method","OS/Array","set",List.of("int","int"),"void");
+            }else if(arithmeticType.equals("null")){
                 jasWriter.writePop();
                 jasWriter.writeNumberPush(0);
+                jasWriter.writeInvoke("method","OS/Array","set",List.of("int","int"),"void");
+            }else{
+                jasWriter.writeInvoke("method","OS/Array","set",List.of("int","int"),"void"); //store value at specified index in the array
             }
-            jasWriter.writeInvoke("method","OS/Array","set",List.of("int","int"),"void"); //store value at specified index in the array
         } else{
             putOutOfTable(varName);
         }
@@ -492,9 +499,6 @@ public class CompilationEngine{
                     }
 
             }else if(currentLine.contains("[")){
-                if(table.kindOf(lastLine).equals("field")){//When the array is a field Variable
-                    getOutOfTable("this");
-                }
                 getOutOfTable(lastLine);
                 process("[");
                 compileExpression();
@@ -525,7 +529,7 @@ public class CompilationEngine{
         }else if(currentLine.contains("stringConstant")){
             translateAndWriteString(currentLine);
             process(currentLine);
-            arithmeticType = "Object";
+            arithmeticType = "OS/String";
         }else if(currentLine.contains("integerConstant")||currentLine.contains("keyword")){
             if(currentLine.contains("true")){
                 jasWriter.writeNumberPush(1);
@@ -611,8 +615,6 @@ public class CompilationEngine{
             int ascii = (int) line.charAt(i);
             jasWriter.writeNumberPush( ascii);
             jasWriter.writeInvoke("method","OS/String", "appendChar", List.of("char"),"OS/String");
-            //muss zu OS/
-            //jasWriter.writeCall("String.appendChar", 2);
         }
     }
 
