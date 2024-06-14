@@ -166,6 +166,7 @@ iload 0
 iconst_2
 imul
 ireturn
+ifL7:
 .end method
 .method public static fillMemory(III)V
 .limit stack 10

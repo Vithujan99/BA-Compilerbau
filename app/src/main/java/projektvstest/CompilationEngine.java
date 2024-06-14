@@ -349,9 +349,8 @@ public class CompilationEngine{
             compileStatements();
             process("}");
         }
-        if(!isReturn){
-            jasWriter.writeLabel("ifL",ifCounter+1);
-        }
+        jasWriter.writeLabel("ifL",ifCounter+1);
+
         decreaseTab();
     }
 
@@ -449,7 +448,7 @@ public class CompilationEngine{
             if(currentLine.contains(".")){ //subroutineCall!!!
 
                 //Gilt nur für OS Klassen
-                if(os.stream().anyMatch(lastLine::contains)){
+                if(os.stream().anyMatch(lastLine::equals)){
                     lastLine = "OS/" + lastLine;
                 }
 
@@ -523,7 +522,13 @@ public class CompilationEngine{
                 callingReturnType = cM.getMethodType(fullName);
                 arithmeticType = callingReturnType;
             }else{
-                getOutOfTable(lastLine);
+                if(table.typeOf(lastLine).equals("OS/Array") && (currentLine.contains("+") ||currentLine.contains("-"))){
+                    getOutOfTable(lastLine);
+                    jasWriter.writeInvoke("method","OS/Array","getBaseAddress",List.of(),"int");
+                }else{
+                    getOutOfTable(lastLine);
+                }
+
                 arithmeticType = table.typeOf(lastLine);
             }
         }else if(currentLine.contains("stringConstant")){
