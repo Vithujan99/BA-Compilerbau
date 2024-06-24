@@ -17,7 +17,7 @@ public class CompilationEngine{
     String className;
     String subroutineName;
     String subroutineFuncKind;
-    String subroutineParameterTypes;
+    List<String> subroutineParameterTypes;
     String subroutineReturnType;
     CheckMethods cM;
     String callingReturnType;
@@ -37,6 +37,7 @@ public class CompilationEngine{
         table = new SymbolTable();
         cM = checkMethods;
         callingReturnType = "";
+        subroutineParameterTypes = new ArrayList<>();
         labelCounter = 0;
         arithmeticType = "int";
         tab = "";
@@ -130,7 +131,7 @@ public class CompilationEngine{
                     currentLine.contains("function")||
                         currentLine.contains("method")){
             table.reset();
-            subroutineParameterTypes = "";
+            subroutineParameterTypes.clear();
             subroutineFuncKind = removeExtraS(currentLine);
             if(subroutineFuncKind.equals("method")||subroutineFuncKind.equals("constructor")){
                 table.define("this", className, "parameter");
@@ -153,7 +154,7 @@ public class CompilationEngine{
 
             //--------------Muss gändert werden nur so für Prototyp??
             if(subroutineName.equals("main")){
-                subroutineParameterTypes = "[Ljava/lang/String;";
+                subroutineParameterTypes = new ArrayList<>(List.of("[Ljava/lang/String;"));
                 table.define("args","String","parameter");
             }
 
@@ -180,7 +181,7 @@ public class CompilationEngine{
             process(currentLine); //type
             name = removeExtraS(currentLine);
             process("identifier");//varName
-            subroutineParameterTypes = "" + JasminWriter.getJasminType(type);
+            subroutineParameterTypes = new ArrayList<>(List.of("" + type));
             table.define(name,type,"parameter");
         }
         while(!currentLine.contains(")")){
@@ -194,7 +195,7 @@ public class CompilationEngine{
             process(currentLine); //type
             name = removeExtraS(currentLine);
             process("identifier");//varName
-            subroutineParameterTypes = subroutineParameterTypes + JasminWriter.getJasminType(type);
+            subroutineParameterTypes.add(type);
             table.define(name,type,"parameter");
         }
     }

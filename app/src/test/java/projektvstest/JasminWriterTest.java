@@ -41,11 +41,11 @@ public class JasminWriterTest {
   }
   @Test void testWriteFuntion(){
     JasminWriter writer = new JasminWriter("CreatedJasminCode\\AClassTest\\JasminWriterTest\\TestWriteFunction.jack");
-    writer.writeFunction("function", "main", "[LOS/String;","void");
-    assertEquals(writer.out,".method public static main([LOS/String;)V");
-    writer.writeFunction("constructor","<init>","II","void");
+    writer.writeFunction("function", "main", List.of("[Ljava/lang/String;"),"void");
+    assertEquals(writer.out,".method public static main([Ljava/lang/String;)V");
+    writer.writeFunction("constructor","<init>",List.of("int","int"),"void");
     assertEquals(writer.out,".method public <init>(II)V");
-    writer.writeFunction("method", "add","I","int");
+    writer.writeFunction("method", "add",List.of("int"),"int");
     assertEquals(writer.out,".method public add(I)I");
     writer.fileClose();
   }

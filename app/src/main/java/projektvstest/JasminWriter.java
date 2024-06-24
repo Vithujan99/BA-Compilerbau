@@ -35,6 +35,7 @@ public class JasminWriter {
             case "boolean" -> "Z";
             case "char" -> "C";
             case "void" -> "V";
+            case  "[Ljava/lang/String;" -> "[Ljava/lang/String;";
             default -> "L" + type + ";";
         };
     }
@@ -56,13 +57,21 @@ public class JasminWriter {
     }
 
     //muss geändert werden??
-    public void writeFunction(String subroutineKind, String subroutineName, String parameterType, String returnType){
+    public void writeFunction(String subroutineKind, String subroutineName, List<String> parameterType, String returnType){
+        StringBuilder pT = new StringBuilder();
+        if(parameterType == null || parameterType.size() == 0){
+            pT.append("");
+        }else{
+            for (String t : parameterType){
+                pT.append(getJasminType(t));
+            }
+        }
         switch (subroutineKind) {
             case "method", "constructor" -> out = ".method public ";
             case "function" -> out = ".method public static ";
             default -> out = "";
         }
-        out = out + subroutineName +"("+parameterType+")"+getJasminType(returnType);
+        out = out + subroutineName +"("+pT+")"+getJasminType(returnType);
         write(out);
     }
     public void writeLimit(Integer varCounter) {
