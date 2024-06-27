@@ -343,6 +343,7 @@ iload 15
 invokestatic OS/Output.printInt(I)V
 iconst_0
 ireturn
+goto ifL9
 ifL8:
 ifL9:
 aload 1
@@ -383,8 +384,10 @@ aload 0
 invokevirtual AxisGame.drawmap()V
 iconst_0
 ireturn
+goto ifL13
 ifL12:
 ifL13:
+goto ifL11
 ifL10:
 ifL11:
 iload 15
@@ -476,6 +479,7 @@ iload 15
 invokestatic OS/Output.printInt(I)V
 iconst_0
 ireturn
+goto ifL15
 ifL14:
 ifL15:
 aload 1
@@ -689,10 +693,13 @@ aload 0
 invokevirtual AxisGame.drawmap()V
 iconst_0
 ireturn
+goto ifL31
 ifL30:
 ifL31:
+goto ifL29
 ifL28:
 ifL29:
+goto ifL27
 ifL26:
 ifL27:
 iload 12
@@ -1072,6 +1079,7 @@ ifL43:
 ifL39:
 iconst_1
 ireturn
+goto ifL37
 ifL36:
 ifL37:
 iload 15
@@ -1162,14 +1170,17 @@ imul
 invokestatic OS/Screen.drawRectangle(IIII)V
 iconst_1
 ireturn
+goto ifL49
 ifL48:
 iconst_0
 ireturn
 ifL49:
+goto ifL47
 ifL46:
 iconst_0
 ireturn
 ifL47:
+goto ifL45
 ifL44:
 ifL45:
 iload 2
@@ -1595,6 +1606,7 @@ jump80:
 iconst_0
 jump81:
 ireturn
+goto ifL61
 ifL60:
 ifL61:
 aload 0

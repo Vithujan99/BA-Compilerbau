@@ -29,7 +29,7 @@ public class JasminWriter {
         }
     }
     //soll "java/lang/String als type mitgegeben werden oder String
-    public static String getJasminType(String type) {
+    private String getJasminType(String type) {
         return switch (type) {
             case "int" -> "I";
             case "boolean" -> "Z";
@@ -182,21 +182,6 @@ public class JasminWriter {
         write(out);
     }
 
-    //Hier auch die frage lieber mit writeInoke kombinieren und dammit die arbeit Engine überlassen?
-    public void writeInvokeOS(String className, String subroutineName) {
-        String type="";
-        if(className.equals("Output")){
-            if(subroutineName.equals("printInt")){
-                type = "I";
-            }else if(subroutineName.equals("printString")){
-                type = "Ljava/lang/String;";
-            }else if(subroutineName.equals("printChar")){
-                type = "C";
-            }
-            write("invokevirtual java/io/PrintStream.print("+type+")V");
-        }
-    }
-
     public void writeArithmetic(String command, String arithmeticType){
         String type;
         if(arithmeticType.equals("int")||arithmeticType.equals("boolean")||arithmeticType.equals("char")){
@@ -205,43 +190,22 @@ public class JasminWriter {
             type = "a";
         }
         switch (command) {
-            case "+":
-                out = "iadd";
-                break;
-            case "-":
-                out = "isub";
-                break;
-            case "*":
-                out = "imul";
-                break;
-            case "/":
-                out = "idiv";
-                break;
-            case "&amp;":
-                out = "iand";
-                break;
-            case "|":
-                out = "ior";
-                break;
-    //Muss geschaut werden wie es mit den Schleifen funktioniert.
-    //jump Counter wird in dieser Klasse vearbeitet!!!
-            case "&lt;":
-                out = "if_icmpge " +"jump"+(jumpCounter)+ "\n"+ writeJumpArithmetic();
-                break;
-            case "&gt;":
-                out = "if_icmple " +"jump"+(jumpCounter)+ "\n"+ writeJumpArithmetic();
-                break;
-            case "=":
-                out = "if_"+type+"cmpne " +"jump"+(jumpCounter)+ "\n"+ writeJumpArithmetic();
-                break;
-            case "neg":
-                out = "ineg";//???
-                break;
-            case "~":
-                out = "ifne " +"jump"+(jumpCounter)+ "\n" + writeJumpArithmetic();//???
-                break;       
-            default:
-                break;
+            case "+" -> out = "iadd";
+            case "-" -> out = "isub";
+            case "*" -> out = "imul";
+            case "/" -> out = "idiv";
+            case "&amp;" -> out = "iand";
+            case "|" -> out = "ior";
+
+            //Muss geschaut werden wie es mit den Schleifen funktioniert.
+            //jump Counter wird in dieser Klasse vearbeitet!!!
+            case "&lt;" -> out = "if_icmpge " + "jump" + (jumpCounter) + "\n" + writeJumpArithmetic();
+            case "&gt;" -> out = "if_icmple " + "jump" + (jumpCounter) + "\n" + writeJumpArithmetic();
+            case "=" -> out = "if_" + type + "cmpne " + "jump" + (jumpCounter) + "\n" + writeJumpArithmetic();
+            case "neg" -> out = "ineg";//???
+            case "~" -> out = "ifne " + "jump" + (jumpCounter) + "\n" + writeJumpArithmetic();//???
+            default -> {
+            }
         }
         write(out);
     }

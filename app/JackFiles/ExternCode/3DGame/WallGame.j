@@ -238,7 +238,9 @@ iload 3
 putfield WallGame.py I
 iconst_1
 ireturn
+goto ifL5
 ifL4:
+ifL5:
 iconst_0
 ireturn
 .end method
@@ -297,7 +299,9 @@ iload 3
 putfield WallGame.py I
 iconst_1
 ireturn
+goto ifL7
 ifL6:
+ifL7:
 iconst_0
 ireturn
 .end method
@@ -356,7 +360,9 @@ iload 3
 putfield WallGame.py I
 iconst_1
 ireturn
+goto ifL9
 ifL8:
+ifL9:
 iconst_0
 ireturn
 .end method
@@ -415,7 +421,9 @@ iload 3
 putfield WallGame.py I
 iconst_1
 ireturn
+goto ifL11
 ifL10:
+ifL11:
 iconst_0
 ireturn
 .end method

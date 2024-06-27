@@ -63,35 +63,25 @@ public class CompilationEngine{
 
     private void process(String str){
         if(!currentLine.contains(str)){
-            System.out.println(className);
-            System.out.println(subroutineName);
-            System.out.println(str);
-            System.out.println("Code is Wrong");
+            System.out.println("Code: " + str + "in Class "+className+" inside the Subroutine "+subroutineName + " is Wrong");
         }
         move();
     }
 
     //function from the Lecture
     public void compileClass(){
-        // write("class");
         move();
         move();
-        increaseTab();
         process("class");
         className = removeExtraS(currentLine);
         jasWriter.writeClass(className);
         process("identifier");//className
         process("{");
 
-        increaseTab();
         compileClassVarDec();
-
         compileSubroutine();
-        decreaseTab();
 
         process("}");
-        decreaseTab();
-        // write("/class");
         fileClose();
         
     }
@@ -162,8 +152,6 @@ public class CompilationEngine{
 
             compileSubroutineBody();
 
-
-
             jasWriter.writeEndSubroutine();
         }
     }
@@ -201,7 +189,6 @@ public class CompilationEngine{
     }
 
     public void compileSubroutineBody(){
-        increaseTab();
         process("{");
 
         compileVarDec();
@@ -238,7 +225,6 @@ public class CompilationEngine{
         compileStatements();
 
         process("}");
-        decreaseTab();
     }
 
     public void compileVarDec(){
@@ -267,10 +253,10 @@ public class CompilationEngine{
     }
 
     public void compileStatements(){
-        List<String> sment = List.of("let","if","while","for","do","return");
+        List<String> statements = List.of("let","if","while","for","do","return");
         //write("statements");
         
-        while(sment.stream().anyMatch(s->currentLine.contains(s))){
+        while(statements.stream().anyMatch(s->currentLine.contains(s))){
             isReturn = false;
             if(currentLine.contains("let")) compileLet();
             if(currentLine.contains("if")) compileIf();
@@ -286,7 +272,6 @@ public class CompilationEngine{
 
     public void compileLet(){
         boolean isArray = false;
-        increaseTab();
         process("let");
         String varName = removeExtraS(currentLine);
         process("identifier");//varName
@@ -324,7 +309,6 @@ public class CompilationEngine{
         } else{
             putOutOfTable(varName);
         }
-        decreaseTab();
     }
 
     public void compileIf(){
@@ -339,10 +323,7 @@ public class CompilationEngine{
         process("{");
         compileStatements();
         process("}");
-        //When last line in compileStatements is a return Statement, then no goto line
-        if(!isReturn){
-            jasWriter.writeGoto("ifL",ifCounter+1);
-        }
+        jasWriter.writeGoto("ifL",ifCounter+1);
         jasWriter.writeLabel("ifL",ifCounter);
         if(currentLine.contains("else")){
             process("else");
