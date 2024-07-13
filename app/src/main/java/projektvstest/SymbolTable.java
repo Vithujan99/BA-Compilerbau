@@ -29,7 +29,7 @@ public class SymbolTable {
                 cS = new ClassSymbol(name, type, kind);
                 classTable.add(cS);
             }
-            case "var", "parameter" -> {
+            case "local", "argument" -> {
                 sS = new SubSymbol(name, type, kind, varIndex++);
                 subTable.add(sS);
             }

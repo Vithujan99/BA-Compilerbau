@@ -83,7 +83,6 @@ public class CompilationEngine{
 
         process("}");
         fileClose();
-        
     }
 
     public void compileClassVarDec(){
@@ -124,7 +123,7 @@ public class CompilationEngine{
             subroutineParameterTypes.clear();
             subroutineFuncKind = removeExtraS(currentLine);
             if(subroutineFuncKind.equals("method")||subroutineFuncKind.equals("constructor")){
-                table.define("this", className, "parameter");
+                table.define("this", className, "argument");
             }
             process(currentLine);
             subroutineReturnType = removeExtraS(currentLine);
@@ -145,7 +144,7 @@ public class CompilationEngine{
             //--------------Muss gändert werden nur so für Prototyp??
             if(subroutineName.equals("main")){
                 subroutineParameterTypes = new ArrayList<>(List.of("[Ljava/lang/String;"));
-                table.define("args","String","parameter");
+                table.define("args","String","argument");
             }
 
             jasWriter.writeFunction(subroutineFuncKind, subroutineName, subroutineParameterTypes, subroutineReturnType);
@@ -170,7 +169,7 @@ public class CompilationEngine{
             name = removeExtraS(currentLine);
             process("identifier");//varName
             subroutineParameterTypes = new ArrayList<>(List.of("" + type));
-            table.define(name,type,"parameter");
+            table.define(name,type,"argument");
         }
         while(!currentLine.contains(")")){
             process(",");
@@ -184,7 +183,7 @@ public class CompilationEngine{
             name = removeExtraS(currentLine);
             process("identifier");//varName
             subroutineParameterTypes.add(type);
-            table.define(name,type,"parameter");
+            table.define(name,type,"argument");
         }
     }
 
@@ -215,9 +214,9 @@ public class CompilationEngine{
                 }
             }
         }
-        //Subroutine Variablen mit 0 initialisieren aber nicht die Parameter
+        //Subroutine Variablen mit 0 initialisieren aber nicht die Argumente
         for(SubSymbol s : table.subTable){
-            if((s.type.equals("char")||s.type.equals("int")||s.type.equals("boolean")) && s.kind.equals("var")){
+            if((s.type.equals("char")||s.type.equals("int")||s.type.equals("boolean")) && s.kind.equals("local")){
                 jasWriter.writeNumberPush(0);
                 putOutOfTable(s.name);
             }
@@ -240,12 +239,12 @@ public class CompilationEngine{
             process(currentLine); //type
             name = removeExtraS(currentLine);
             process("identifier");//varName
-            table.define(name,type,"var");
+            table.define(name,type,"local");
             while(currentLine.contains(",")){
                 process(",");
                 name = removeExtraS(currentLine);
                 process("identifier");//varName
-                table.define(name,type,"var");
+                table.define(name,type,"local");
             }
 
             process(";");
@@ -324,6 +323,7 @@ public class CompilationEngine{
         compileStatements();
         process("}");
         jasWriter.writeGoto("ifL",ifCounter+1);
+
         jasWriter.writeLabel("ifL",ifCounter);
         if(currentLine.contains("else")){
             process("else");
@@ -339,7 +339,6 @@ public class CompilationEngine{
     public void compileWhile(){
         Integer whileCounter = labelCounter;
         labelCounter += 2;
-        increaseTab();
         jasWriter.writeLabel("whileL", whileCounter + 1);
         process("while");
         process("(");
@@ -351,7 +350,6 @@ public class CompilationEngine{
         process("}");
         jasWriter.writeGoto("whileL",whileCounter + 1);
         jasWriter.writeLabel("whileL", whileCounter);
-        decreaseTab();
     }
 
     public void compileFor(){
@@ -403,7 +401,11 @@ public class CompilationEngine{
             || currentLine.contains("integerConstant")
             ||currentLine.contains("stringConstant")
             ||unaryOP.stream().anyMatch(uo -> currentLine.contains(uo))){
-              compileExpression();
+            if(!subroutineFuncKind.contains("constructor")){
+                compileExpression();
+            }else{
+                process(currentLine);
+            }
         }
         jasWriter.writeReturn(subroutineReturnType);
         process(";");
@@ -531,9 +533,7 @@ public class CompilationEngine{
                 process(currentLine);
                 arithmeticType = "null";
             }else if(currentLine.contains("this")){
-                if(!subroutineFuncKind.contains("constructor")){
-                    getOutOfTable(removeExtraS(currentLine));
-                }
+                getOutOfTable(removeExtraS(currentLine));
                 process(currentLine);
                 arithmeticType = "Object";
             }else{

@@ -241,9 +241,11 @@ iand
 ifeq ifL10
 iconst_1
 ireturn
+goto ifL11
 ifL10:
 iconst_0
 ireturn
+ifL11:
 .end method
 .method public crash()Z
 .limit stack 10
@@ -290,9 +292,11 @@ ior
 ifeq ifL12
 iconst_1
 ireturn
+goto ifL13
 ifL12:
 iconst_0
 ireturn
+ifL13:
 .end method
 .method public selfCrash()Z
 .limit stack 10

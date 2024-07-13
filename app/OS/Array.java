@@ -57,6 +57,7 @@ public class Array {
 
     public void dispose() {
         for(int i = baseAddress; i < baseAddress+size; i++){
+            Memory.poke(i,0);
             fakeMemory[i] = null;
         }
         return;

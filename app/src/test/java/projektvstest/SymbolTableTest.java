@@ -10,9 +10,9 @@ public class SymbolTableTest {
      table = new SymbolTable();
      table.define("x","int","field");
      table.define("pointCount","int","static");
-     table.define("this","Point","var");
-     table.define("dx","int","var");
-     table.define("ds","String","var");
+     table.define("this","Point","argument");
+     table.define("dx","int","local");
+     table.define("ds","String","local");
   }
   @Test void testDefine() {
     assertEquals(table.classTable.size(),2);

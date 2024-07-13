@@ -1885,7 +1885,7 @@
 <symbol> ) </symbol>
 <symbol> ] </symbol>
 <symbol> = </symbol>
-<keyword> true </keyword>
+<integerConstant> 1 </integerConstant>
 <symbol> ; </symbol>
 <keyword> let </keyword>
 <identifier> row </identifier>
