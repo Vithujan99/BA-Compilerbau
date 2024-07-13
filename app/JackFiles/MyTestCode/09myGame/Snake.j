@@ -241,7 +241,6 @@ iand
 ifeq ifL10
 iconst_1
 ireturn
-goto ifL11
 ifL10:
 iconst_0
 ireturn
@@ -292,7 +291,6 @@ ior
 ifeq ifL12
 iconst_1
 ireturn
-goto ifL13
 ifL12:
 iconst_0
 ireturn

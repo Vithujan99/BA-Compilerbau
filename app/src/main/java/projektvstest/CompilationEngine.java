@@ -322,8 +322,9 @@ public class CompilationEngine{
         process("{");
         compileStatements();
         process("}");
-        jasWriter.writeGoto("ifL",ifCounter+1);
-
+        if(!isReturn){
+            jasWriter.writeGoto("ifL",ifCounter+1);
+        }
         jasWriter.writeLabel("ifL",ifCounter);
         if(currentLine.contains("else")){
             process("else");

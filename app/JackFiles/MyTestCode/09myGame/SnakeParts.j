@@ -139,7 +139,6 @@ iand
 ifeq ifL2
 iconst_1
 ireturn
-goto ifL3
 ifL2:
 ifL3:
 aload 1
