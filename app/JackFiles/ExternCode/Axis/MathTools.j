@@ -18,7 +18,6 @@ jump1:
 ifeq ifL0
 iconst_1
 ireturn
-goto ifL1
 ifL0:
 ifL1:
 iload 0
@@ -96,7 +95,6 @@ jump11:
 ifeq ifL6
 iconst_0
 ireturn
-goto ifL7
 ifL6:
 ifL7:
 iload 1
@@ -243,7 +241,6 @@ isub
 iload 1
 idiv
 ireturn
-goto ifL17
 ifL16:
 ifL17:
 iload 0
@@ -271,7 +268,6 @@ isub
 iload 1
 invokestatic MathTools.sin10(II)I
 ireturn
-goto ifL19
 ifL18:
 ifL19:
 iload 0
@@ -300,7 +296,6 @@ iload 1
 invokestatic MathTools.sin10(II)I
 ineg
 ireturn
-goto ifL21
 ifL20:
 ifL21:
 iload 0
